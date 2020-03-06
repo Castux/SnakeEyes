@@ -119,6 +119,10 @@ local mt =
 
 mt.__index = mt
 
+local function is_die(t)
+	return getmetatable(t) == mt
+end
+
 d = function(outcomes, probabilities)
 
 	if type(outcomes) == "number" then
@@ -148,18 +152,28 @@ d = function(outcomes, probabilities)
 
 	local type_found
 
-	for i,v in ipairs(outcomes) do
-
-		assert(type(v) == "number" or type(v) == "string" or type(v) == "boolean",
+	local function add_outcome(o,p)
+		assert(type(o) == "number" or type(o) == "string" or type(o) == "boolean",
 			"only numbers, strings and booleans can be used as outcomes")
 
 		if type_found then
-			assert(type(v) == type_found, "all outcomes of a die must be of the same type")
+			assert(type(o) == type_found, "all outcomes of a die must be of the same type")
 		else
-			type_found = type(v)
+			type_found = type(o)
 		end
 
-		t[v] = (t[v] or 0) + probabilities[i] / sum
+		t[o] = (t[o] or 0) + p / sum
+	end
+
+	for i,v in ipairs(outcomes) do
+
+		if is_die(v) then
+			for k,p in pairs(v.data) do
+				add_outcome(k, probabilities[i] * p)
+			end
+		else
+			add_outcome(v, probabilities[i])
+		end
 	end
 
 	return setmetatable({ data = t }, mt)
