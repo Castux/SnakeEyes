@@ -1,4 +1,5 @@
 local d
+local is_die
 
 local function apply(func, ...)
 
@@ -6,10 +7,10 @@ local function apply(func, ...)
 	local tempk = {}
 	local tempp = 1
 
-	-- Replace single numbers with 1-sided dice
+	-- Replace single values with 1-sided dice
 
 	for i,v in ipairs(dice) do
-		if type(v) == "number" then
+		if not is_die(v) then
 			dice[i] = d{v}
 		end
 	end
@@ -119,7 +120,7 @@ local mt =
 
 mt.__index = mt
 
-local function is_die(t)
+is_die = function(t)
 	return getmetatable(t) == mt
 end
 
@@ -213,11 +214,60 @@ local function count(func, ...)
 	return sum(table.unpack(dice))
 end
 
+local function highest(...)
+	return accumulate(math.max, ...)
+end
+
+local function lowest(...)
+	return accumulate(math.min, ...)
+end
+
+local function n_lowest(n, ...)
+
+	local helper = function(str,new)
+
+		local current = {new}
+
+		if type(str) == "number" then
+			table.insert(current, str)
+		else
+			for word in str:gmatch("%d+") do
+				table.insert(current, tonumber(word))
+			end
+		end
+
+		local index = 1
+		while index < #current and current[index] > current[index + 1] do
+			current[index], current[index + 1] = current[index + 1], current[index]
+			index = index + 1
+		end
+
+		while #current > n do
+			table.remove(current)
+		end
+
+		return table.concat(current, " ")
+	end
+
+	return accumulate(helper, ...)
+end
+
+local function nth(n, ...)
+
+	return n_lowest(n, ...):apply(function(str)
+		return tonumber(str:match "(%d+)$")
+	end)
+end
+
 return
 {
 	d = d,
 	apply = apply,
 	accumulate = accumulate,
 	sum = sum,
-	count = count
+	count = count,
+	highest = highest,
+	lowest = lowest,
+	n_lowest = n_lowest,
+	nth = nth
 }
