@@ -88,18 +88,31 @@ function Die:summary()
 		end
 	end
 
+	local lte, gte = {},{}
 	if not boolean then
 		table.sort(outcomes)
+		
+		local sum = 0
+		for i = 1,#outcomes do
+			sum = sum + self.data[outcomes[i]]
+			lte[i] = sum
+		end
+		
+		sum = 0
+		for i = #outcomes,1,-1 do
+			sum = sum + self.data[outcomes[i]]
+			gte[i] = sum
+		end
 	end
 
 	local lines = {}
-	for _,v in ipairs(outcomes) do
+	for i,v in ipairs(outcomes) do
 		local line =
 		{
 			tostring(v),
 			fmt(self.data[v]),
-			(not boolean) and fmt(self:lte(v)(true)) or nil,
-			(not boolean) and fmt(self:gte(v)(true)) or nil,
+			(not boolean) and fmt(lte[i]) or nil,
+			(not boolean) and fmt(gte[i]) or nil,
 		}
 
 		table.insert(lines, table.concat(line, "\t"))
