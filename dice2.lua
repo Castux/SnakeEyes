@@ -73,6 +73,10 @@ function Die.new(outcomes, probabilities)
 	return setmetatable({ data = t }, Die)
 end
 
+local function fmt(x)
+	return string.format("%6.2f%%", x * 100)
+end
+
 function Die:summary()
 
 	local boolean = false
@@ -93,9 +97,9 @@ function Die:summary()
 		local line =
 		{
 			tostring(v),
-			self.data[v],
-			(not boolean) and self:lte(v)(true) or nil,
-			(not boolean) and self:gte(v)(true) or nil,
+			fmt(self.data[v]),
+			(not boolean) and fmt(self:lte(v)(true)) or nil,
+			(not boolean) and fmt(self:gte(v)(true)) or nil,
 		}
 
 		table.insert(lines, table.concat(line, "\t"))
@@ -275,6 +279,14 @@ function DiceCollection:count(func)
 	end
 	
 	return DiceCollection.new(dice):sum()
+end
+
+function DiceCollection:any(func)
+	return self:count(func):gt(0)
+end
+
+function DiceCollection:all(func)
+	return self:count(func):eq(#self)
 end
 
 return Die
