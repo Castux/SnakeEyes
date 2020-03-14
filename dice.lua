@@ -52,7 +52,7 @@ function Die.new(outcomes, probabilities)
 			type_found = type(o)
 		end
 
-		t[o] = (t[o] or 0) + p / sum
+		t[o] = (t[o] or 0) + p
 	end
 
 	for i,v in ipairs(outcomes) do
@@ -68,6 +68,10 @@ function Die.new(outcomes, probabilities)
 		else
 			add_outcome(v, probabilities[i])
 		end
+	end
+	
+	for k,v in pairs(t) do
+		t[k] = v / sum
 	end
 
 	return setmetatable({ data = t }, Die)
