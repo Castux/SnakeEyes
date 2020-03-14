@@ -1,138 +1,27 @@
-local d
-local is_die
+local Die = {}
+local DiceCollection = {}
 
-local function apply(func, ...)
-
-	local dice = {...}
-	local tempk = {}
-	local tempp = 1
-
-	-- Replace single values with 1-sided dice
-
-	for i,v in ipairs(dice) do
-		if not is_die(v) then
-			dice[i] = d{v}
-		end
-	end
-
-	-- Enumerate all combinations of outcomes
-
-	local outcomes = {}
-	local probabilities = {}
-
-	local function rec(level)
-
-		for k,v in pairs(dice[level].data) do
-			tempk[level] = k
-			tempp = tempp * v
-
-			if level == #dice then
-				local res = func(table.unpack(tempk))
-
-				table.insert(outcomes, res)
-				table.insert(probabilities, tempp)
-
-			else
-				rec(level + 1)
-			end
-
-			tempp = tempp / v
-		end
-
-	end
-
-	rec(1)
-	return d(outcomes, probabilities)
+local function is_die(d)
+	return getmetatable(d) == Die
 end
 
-local function summary(die)
-
-	local boolean = false
-	local outcomes = {}
-	for k,_ in pairs(die.data) do
-		table.insert(outcomes, k)
-		if type(k) == "boolean" then
-			boolean = true
-		end
-	end
-
-	if not boolean then
-		table.sort(outcomes)
-	end
-
-	local lines = {}
-	for _,v in ipairs(outcomes) do
-		local line =
-		{
-			tostring(v),
-			die.data[v],
-			(not boolean) and die:lte(v)(true) or nil,
-			(not boolean) and die:gte(v)(true) or nil,
-		}
-
-		table.insert(lines, table.concat(line, "\t"))
-	end
-
-	return table.concat(lines, "\n")
+local function is_dice_collection(dc)
+	return getmetatable(dc) == DiceCollection
 end
 
-local function lift(func)
-	return function(...)
-		return apply(func, ...)
-	end
-end
+--[[ Die ]]
 
-local mt =
-{
-	__call = function(self, arg)
-		return self.data[arg] or 0
-	end,
+Die.__index = Die
 
-	apply = function(self, func)
-		return apply(func, self)
-	end,
-
-	__add = lift(function(x,y) return x + y end),
-	__sub = lift(function(x,y) return x - y end),
-	__div = lift(function(x,y) return x / y end),
-	__pow = lift(function(x,y) return x ^ y end),
-	__idiv = lift(function(x,y) return x // y end),
-	__mod = lift(function(x,y) return x % y end),
-	__unm = lift(function(x) return -x end),
-
-	lt = lift(function(x,y) return x < y end),
-	lte = lift(function(x,y) return x <= y end),
-	gt = lift(function(x,y) return x > y end),
-	gte = lift(function(x,y) return x >= y end),
-	eq = lift(function(x,y) return x == y end),
-	neq = lift(function(x,y) return x ~= y end),
-
-	times = function(self, n)
-		local t = {}
-		for i = 1,n do
-			t[i] = self
-		end
-		return table.unpack(t)
-	end,
-
-	__tostring = summary
-}
-
-mt.__index = mt
-
-is_die = function(t)
-	return getmetatable(t) == mt
-end
-
-d = function(outcomes, probabilities)
-
+function Die.new(outcomes, probabilities)
+	
 	if type(outcomes) == "number" then
 		local faces = {}
 		for i = 1,outcomes do
 			faces[i] = i
 		end
 
-		return d(faces)
+		outcomes = faces
 	end
 
 	if not probabilities then
@@ -167,6 +56,10 @@ d = function(outcomes, probabilities)
 	end
 
 	for i,v in ipairs(outcomes) do
+		
+		if is_dice_collection(v) then
+			v = v:sum()
+		end
 
 		if is_die(v) then
 			for k,p in pairs(v.data) do
@@ -177,97 +70,231 @@ d = function(outcomes, probabilities)
 		end
 	end
 
-	return setmetatable({ data = t }, mt)
+	return setmetatable({ data = t }, Die)
 end
 
-local function accumulate(func, ...)
+local function fmt(x)
+	return string.format("%6.2f%%", x * 100)
+end
 
-	local dice = {...}
-	local tmp = dice[1]
+function Die:summary()
 
-	for i = 2,#dice do
-		tmp = apply(func, tmp, dice[i])
+	local boolean = false
+	local outcomes = {}
+	for k,_ in pairs(self.data) do
+		table.insert(outcomes, k)
+		if type(k) == "boolean" then
+			boolean = true
+		end
 	end
 
+	if not boolean then
+		table.sort(outcomes)
+	end
+
+	local lines = {}
+	for _,v in ipairs(outcomes) do
+		local line =
+		{
+			tostring(v),
+			fmt(self.data[v]),
+			(not boolean) and fmt(self:lte(v)(true)) or nil,
+			(not boolean) and fmt(self:gte(v)(true)) or nil,
+		}
+
+		table.insert(lines, table.concat(line, "\t"))
+	end
+
+	return table.concat(lines, "\n")
+end
+
+function Die:__concat(other)
+	return DiceCollection.new{self, other}
+end
+
+Die.__tostring = Die.summary
+
+local function lift(func)
+	return function(a,b)
+		
+		if is_dice_collection(a) then
+			a = a:sum()
+		end
+		
+		if b and is_dice_collection(b) then
+			b = b:sum()
+		end
+		
+		if not is_die(a) then
+			a = Die.new{a}
+		end
+		
+		if b and not is_die(b) then
+			b = Die.new{b}
+		end
+		
+		return DiceCollection.new{a,b}:apply(func)
+	end	
+end
+
+Die.__add = lift(function(x,y) return x + y end)
+Die.__sub = lift(function(x,y) return x - y end)
+Die.__div = lift(function(x,y) return x / y end)
+Die.__pow = lift(function(x,y) return x ^ y end)
+Die.__idiv = lift(function(x,y) return x // y end)
+Die.__mod = lift(function(x,y) return x % y end)
+Die.__unm = lift(function(x) return -x end)
+
+Die.lt = lift(function(x,y) return x < y end)
+Die.lte = lift(function(x,y) return x <= y end)
+Die.gt = lift(function(x,y) return x > y end)
+Die.gte = lift(function(x,y) return x >= y end)
+Die.eq = lift(function(x,y) return x == y end)
+Die.neq = lift(function(x,y) return x ~= y end)
+
+local mul = lift(function(x,y) return x * y end)
+
+function Die.__mul(a,b)
+	
+	if type(a) == "number" then
+		local t = {}
+		for i = 1,a do
+			t[i] = b
+		end
+		return DiceCollection.new(t)
+	end
+	
+	return mul(a,b)	
+end
+
+function Die:__call(v)
+	return self.data[v] or 0
+end
+
+function Die:apply(func)
+	return DiceCollection.apply({self}, func)
+end
+
+--[[ DiceCollection ]]
+
+DiceCollection.__index = DiceCollection
+
+function DiceCollection.new(dice)
+	
+	local self = {}
+	
+	for i,v in ipairs(dice) do
+		
+		if is_dice_collection(v) then
+			v = v:sum()
+		end
+		
+		if not is_die(v) then
+			v = Die.new{v}
+		end
+		
+		self[i] = v
+	end
+	
+	setmetatable(self, DiceCollection)
+	return self
+end
+
+function DiceCollection:apply(func)
+	
+	local dice = self
+	local tempk = {}
+	local tempp = 1
+
+	-- Enumerate all combinations of outcomes
+
+	local outcomes = {}
+	local probabilities = {}
+
+	local function rec(level)
+
+		for k,v in pairs(dice[level].data) do
+			tempk[level] = k
+			tempp = tempp * v
+
+			if level == #dice then
+				local res = func(table.unpack(tempk))
+
+				table.insert(outcomes, res)
+				table.insert(probabilities, tempp)
+
+			else
+				rec(level + 1)
+			end
+
+			tempp = tempp / v
+		end
+
+	end
+
+	rec(1)
+	return Die.new(outcomes, probabilities)
+end
+
+DiceCollection.__add = Die.__add
+DiceCollection.__sub = Die.__sub
+DiceCollection.__div = Die.__div
+DiceCollection.__mul = Die.__mul
+DiceCollection.__pow = Die.__pow
+DiceCollection.__idiv = Die.__idiv
+DiceCollection.__mod = Die.__mod
+DiceCollection.__unm = Die.__unm
+
+DiceCollection.__lt = Die.__lt
+DiceCollection.__lte = Die.__lte
+DiceCollection.__gt = Die.__gt
+DiceCollection.__gte = Die.__gte
+DiceCollection.__eq = Die.__eq
+DiceCollection.__neq = Die.__neq
+
+function DiceCollection:__tostring()
+	return self:sum():summary()
+end
+
+function DiceCollection:accumulate(func)
+	
+	local tmp = self[1]
+	
+	for i = 2, #self do
+		tmp = DiceCollection.new{tmp, self[i]}:apply(func)
+	end
+	
 	return tmp
 end
 
-local function sum(...)
-	return accumulate(function(x,y) return x + y end, ...)
+function DiceCollection:sum()
+	return self:accumulate(function(x,y) return x + y end)
 end
 
-mt.__mul = function(a,b)
-	if type(a) == "number" then
-		return sum(b:times(a))
-	else
-		return apply(function(x,y) return x * y end, a, b)
-	end
-end
-
-local function count(func, ...)
-
-	local dice = {...}
-	for i,v in ipairs(dice) do
+function DiceCollection:count(func)
+	
+	local dice = {}
+	for i,v in ipairs(self) do
 		dice[i] = v:apply(function(x) return func(x) and 1 or 0 end)
 	end
-
-	return sum(table.unpack(dice))
+	
+	return DiceCollection.new(dice):sum()
 end
 
-local function highest(...)
-	return accumulate(math.max, ...)
+function DiceCollection:any(func)
+	return self:count(func):gt(0)
 end
 
-local function lowest(...)
-	return accumulate(math.min, ...)
+function DiceCollection:all(func)
+	return self:count(func):eq(#self)
 end
 
-local function n_lowest(n, ...)
-
-	local helper = function(str,new)
-
-		local current = {new}
-
-		if type(str) == "number" then
-			table.insert(current, str)
-		else
-			for word in str:gmatch("%d+") do
-				table.insert(current, tonumber(word))
-			end
-		end
-
-		local index = 1
-		while index < #current and current[index] > current[index + 1] do
-			current[index], current[index + 1] = current[index + 1], current[index]
-			index = index + 1
-		end
-
-		while #current > n do
-			table.remove(current)
-		end
-
-		return table.concat(current, " ")
-	end
-
-	return accumulate(helper, ...)
+function DiceCollection:highest()
+	return self:accumulate(math.max)
 end
 
-local function nth(n, ...)
-
-	return n_lowest(n, ...):apply(function(str)
-		return tonumber(str:match "(%d+)$")
-	end)
+function DiceCollection:lowest()
+	return self:accumulate(math.min)
 end
 
-return
-{
-	d = d,
-	apply = apply,
-	accumulate = accumulate,
-	sum = sum,
-	count = count,
-	highest = highest,
-	lowest = lowest,
-	n_lowest = n_lowest,
-	nth = nth
-}
+return Die
