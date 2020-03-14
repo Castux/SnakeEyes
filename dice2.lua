@@ -167,6 +167,10 @@ function Die:__call(v)
 	return self.data[v] or 0
 end
 
+function Die:apply(func)
+	return DiceCollection.apply({self}, func)
+end
+
 --[[ DiceCollection ]]
 
 DiceCollection.__index = DiceCollection
@@ -176,7 +180,15 @@ function DiceCollection.new(dice)
 	local self = {}
 	
 	for i,v in ipairs(dice) do
-		assert(is_die(v), "Cannot add anything else than a Die to a DiceCollection")
+		
+		if is_dice_collection(v) then
+			v = v:sum()
+		end
+		
+		if not is_die(v) then
+			v = Die.new{v}
+		end
+		
 		self[i] = v
 	end
 	
@@ -222,6 +234,8 @@ end
 
 DiceCollection.__add = Die.__add
 DiceCollection.__sub = Die.__sub
+DiceCollection.__div = Die.__div
+DiceCollection.__mul = Die.__mul
 DiceCollection.__pow = Die.__pow
 DiceCollection.__idiv = Die.__idiv
 DiceCollection.__mod = Die.__mod
@@ -233,6 +247,10 @@ DiceCollection.__gt = Die.__gt
 DiceCollection.__gte = Die.__gte
 DiceCollection.__eq = Die.__eq
 DiceCollection.__neq = Die.__neq
+
+function DiceCollection:__tostring()
+	return self:sum():summary()
+end
 
 function DiceCollection:accumulate(func)
 	
@@ -247,6 +265,16 @@ end
 
 function DiceCollection:sum()
 	return self:accumulate(function(x,y) return x + y end)
+end
+
+function DiceCollection:count(func)
+	
+	local dice = {}
+	for i,v in ipairs(self) do
+		dice[i] = v:apply(function(x) return func(x) and 1 or 0 end)
+	end
+	
+	return DiceCollection.new(dice):sum()
 end
 
 return Die
