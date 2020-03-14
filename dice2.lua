@@ -289,4 +289,12 @@ function DiceCollection:all(func)
 	return self:count(func):eq(#self)
 end
 
+function DiceCollection:highest()
+	return self:accumulate(math.max)
+end
+
+function DiceCollection:lowest()
+	return self:accumulate(math.min)
+end
+
 return Die
