@@ -314,4 +314,32 @@ function DiceCollection:lowest()
 	return self:accumulate(math.min)
 end
 
+--[[ Environment setup ]]
+
+function Die.setup_env()
+	
+	local env =
+	{
+		d = Die.new
+	}
+	
+	local mt =
+	{
+		__index = function(t,k)
+			
+			if _G[k] then return _G[k] end
+			
+			local n = k:match("^d(%d+)$")
+			if n then
+				return Die.new(tonumber(n))
+			end
+			
+			return nil
+		end
+	}
+	
+	setmetatable(env, mt)
+	return env
+end
+
 return Die
