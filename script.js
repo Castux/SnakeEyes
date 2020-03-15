@@ -18,18 +18,25 @@ function run()
 
     const L = lauxlib.luaL_newstate();
     lualib.luaL_openlibs(L);
-    var status = lauxlib.luaL_loadstring(L, fengari.to_luastring(script));
 
+    var status = lauxlib.luaL_loadstring(L, fengari.to_luastring(script));
     var result = "";
 
     if(status == lua.LUA_OK)
     {
-        lua.lua_call(L, 0, 0);
-        result = "Did it!";
+        var call_result = lua.lua_pcall(L, 0, 0, 0);
+        if (call_result != lua.LUA_OK)
+        {
+            result = fengari.to_jsstring(lua.lua_tostring(L, -1));
+        }
+        else
+        {
+            result = "Did it!";
+        }
     }
     else
     {
-        result = "Error occured";
+        result = fengari.to_jsstring(lua.lua_tostring(L, -1));
     }
 
     var text = document.createTextNode(result);
