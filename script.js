@@ -24,6 +24,11 @@ function run()
 
     if(status == lua.LUA_OK)
     {
+        lauxlib.luaL_loadfile(L, fengari.to_luastring("dice.lua"));
+        lua.lua_call(L, 0, 1);
+
+        var upvalue = lua.lua_setupvalue(L, -2, 1);
+
         var call_result = lua.lua_pcall(L, 0, 0, 0);
         if (call_result != lua.LUA_OK)
         {

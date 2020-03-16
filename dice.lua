@@ -14,7 +14,7 @@ end
 Die.__index = Die
 
 function Die.new(outcomes, probabilities)
-	
+
 	if type(outcomes) == "number" then
 		local faces = {}
 		for i = 1,outcomes do
@@ -56,7 +56,7 @@ function Die.new(outcomes, probabilities)
 	end
 
 	for i,v in ipairs(outcomes) do
-		
+
 		if is_dice_collection(v) then
 			v = v:sum()
 		end
@@ -69,7 +69,7 @@ function Die.new(outcomes, probabilities)
 			add_outcome(v, probabilities[i])
 		end
 	end
-	
+
 	for k,v in pairs(t) do
 		t[k] = v / sum
 	end
@@ -95,13 +95,13 @@ function Die:summary()
 	local lte, gte = {},{}
 	if not boolean then
 		table.sort(outcomes)
-		
+
 		local sum = 0
 		for i = 1,#outcomes do
 			sum = sum + self.data[outcomes[i]]
 			lte[i] = sum
 		end
-		
+
 		sum = 0
 		for i = #outcomes,1,-1 do
 			sum = sum + self.data[outcomes[i]]
@@ -133,25 +133,25 @@ Die.__tostring = Die.summary
 
 local function lift(func)
 	return function(a,b)
-		
+
 		if is_dice_collection(a) then
 			a = a:sum()
 		end
-		
+
 		if b and is_dice_collection(b) then
 			b = b:sum()
 		end
-		
+
 		if not is_die(a) then
 			a = Die.new{a}
 		end
-		
+
 		if b and not is_die(b) then
 			b = Die.new{b}
 		end
-		
+
 		return DiceCollection.new{a,b}:apply(func)
-	end	
+	end
 end
 
 Die.__add = lift(function(x,y) return x + y end)
@@ -172,7 +172,7 @@ Die.neq = lift(function(x,y) return x ~= y end)
 local mul = lift(function(x,y) return x * y end)
 
 function Die.__mul(a,b)
-	
+
 	if type(a) == "number" then
 		local t = {}
 		for i = 1,a do
@@ -180,8 +180,8 @@ function Die.__mul(a,b)
 		end
 		return DiceCollection.new(t)
 	end
-	
-	return mul(a,b)	
+
+	return mul(a,b)
 end
 
 function Die:__call(v)
@@ -197,28 +197,28 @@ end
 DiceCollection.__index = DiceCollection
 
 function DiceCollection.new(dice)
-	
+
 	local self = {}
-	
+
 	for i,v in ipairs(dice) do
-		
+
 		if is_dice_collection(v) then
 			v = v:sum()
 		end
-		
+
 		if not is_die(v) then
 			v = Die.new{v}
 		end
-		
+
 		self[i] = v
 	end
-	
+
 	setmetatable(self, DiceCollection)
 	return self
 end
 
 function DiceCollection:apply(func)
-	
+
 	local dice = self
 	local tempk = {}
 	local tempp = 1
@@ -274,13 +274,13 @@ function DiceCollection:__tostring()
 end
 
 function DiceCollection:accumulate(func)
-	
+
 	local tmp = self[1]
-	
+
 	for i = 2, #self do
 		tmp = DiceCollection.new{tmp, self[i]}:apply(func)
 	end
-	
+
 	return tmp
 end
 
@@ -289,12 +289,12 @@ function DiceCollection:sum()
 end
 
 function DiceCollection:count(func)
-	
+
 	local dice = {}
 	for i,v in ipairs(self) do
 		dice[i] = v:apply(function(x) return func(x) and 1 or 0 end)
 	end
-	
+
 	return DiceCollection.new(dice):sum()
 end
 
@@ -316,30 +316,30 @@ end
 
 --[[ Environment setup ]]
 
-function Die.setup_env()
-	
+local function setup_env()
+
 	local env =
 	{
 		d = Die.new
 	}
-	
+
 	local mt =
 	{
 		__index = function(t,k)
-			
+
 			if _G[k] then return _G[k] end
-			
+
 			local n = k:match("^d(%d+)$")
 			if n then
 				return Die.new(tonumber(n))
 			end
-			
+
 			return nil
 		end
 	}
-	
+
 	setmetatable(env, mt)
 	return env
 end
 
-return Die
+return setup_env()
