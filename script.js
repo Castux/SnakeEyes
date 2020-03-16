@@ -12,8 +12,39 @@ var editor = CodeMirror.fromTextArea(myTextarea, {
 
 var output = document.getElementById("output");
 
+function clear_output()
+{
+    output.innerHTML = "";
+}
+
+function write_to_output(s)
+{
+    var text = document.createTextNode(s);
+    output.appendChild(text);
+}
+
+const luaB_print = function(L) {
+    let n = lua.lua_gettop(L); /* number of arguments */
+    lua.lua_getglobal(L, fengari.to_luastring("tostring", true));
+    for (let i = 1; i <= n; i++) {
+        lua.lua_pushvalue(L, -1);  /* function to be called */
+        lua.lua_pushvalue(L, i);  /* value to print */
+        lua.lua_call(L, 1, 1);
+        let s = lua.lua_tolstring(L, -1);
+        if (s === null)
+            return lauxlib.luaL_error(L, fengari.to_luastring("'tostring' must return a string to 'print'"));
+        if (i > 1) write_to_output("\t");
+        write_to_output(fengari.to_jsstring(s));
+        lua.lua_pop(L, 1);
+    }
+    write_to_output("\n");
+    return 0;
+};
+
 function run()
 {
+    clear_output();
+
     var script = editor.doc.getValue();
 
     const L = lauxlib.luaL_newstate();
@@ -26,25 +57,19 @@ function run()
     {
         lauxlib.luaL_loadfile(L, fengari.to_luastring("dice.lua"));
         lua.lua_call(L, 0, 1);
+        lua.lua_setupvalue(L, -2, 1);
 
-        var upvalue = lua.lua_setupvalue(L, -2, 1);
+        lua.lua_pushjsfunction(L, luaB_print);
+        lua.lua_setglobal(L, fengari.to_luastring("print"));
 
         var call_result = lua.lua_pcall(L, 0, 0, 0);
         if (call_result != lua.LUA_OK)
         {
-            result = fengari.to_jsstring(lua.lua_tostring(L, -1));
-        }
-        else
-        {
-            result = "Did it!";
+            write_to_output(fengari.to_jsstring(lua.lua_tostring(L, -1)) + "\n");
         }
     }
     else
     {
-        result = fengari.to_jsstring(lua.lua_tostring(L, -1));
+        write_to_output(fengari.to_jsstring(lua.lua_tostring(L, -1)) + "\n");
     }
-
-    var text = document.createTextNode(result);
-    output.innerHTML = "";
-    output.appendChild(text);
 }
