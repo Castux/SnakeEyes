@@ -91,6 +91,9 @@ function read_script()
     if(script != null)
     {
         var decompressed = LZString.decompressFromEncodedURIComponent(script);
+        if(decompressed == null)
+            decompressed = "-- error while decoding URL";
+
         editor.doc.setValue(decompressed);
     }
 }
