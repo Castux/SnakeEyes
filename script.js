@@ -3,14 +3,21 @@ const lua      = fengari.lua;
 const lauxlib  = fengari.lauxlib;
 const lualib   = fengari.lualib;
 
+var editor;
+var output;
 
-var myTextarea = document.getElementById("code");
-var editor = CodeMirror.fromTextArea(myTextarea, {
-    lineNumbers: true,
-    mode: "lua"
-});
+function setup()
+{
+    var myTextarea = document.getElementById("code");
+    editor = CodeMirror.fromTextArea(myTextarea, {
+        lineNumbers: true,
+        mode: "lua"
+    });
 
-var output = document.getElementById("output");
+    output = document.getElementById("output");
+
+    read_script();
+}
 
 function clear_output()
 {
@@ -72,4 +79,24 @@ function run()
     {
         write_to_output(fengari.to_jsstring(lua.lua_tostring(L, -1)) + "\n");
     }
+
+    encode_script(script);
+}
+
+function read_script()
+{
+    var params = new URLSearchParams(document.location.search);
+    var script = params.get("script");
+
+    if(script != null)
+    {
+        var decompressed = LZString.decompressFromEncodedURIComponent(script);
+        editor.doc.setValue(decompressed);
+    }
+}
+
+function encode_script(s)
+{
+    var compressed = LZString.compressToEncodedURIComponent(s);
+    window.history.pushState(null, "", "?script=" + compressed);
 }
