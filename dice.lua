@@ -290,6 +290,11 @@ end
 
 function DiceCollection:count(func)
 
+	if type(func) ~= "function" then
+		local value = func
+		func = function(x) return x == value end
+	end
+
 	local dice = {}
 	for i,v in ipairs(self) do
 		dice[i] = v:apply(function(x) return func(x) and 1 or 0 end)
