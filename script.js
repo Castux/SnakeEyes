@@ -16,7 +16,7 @@ function setup()
 
     output = document.getElementById("output");
 
-    read_script();
+    check_url();
 }
 
 function clear_output()
@@ -83,23 +83,39 @@ function run()
     encode_script(script);
 }
 
-function read_script()
+function check_url()
 {
     var params = new URLSearchParams(document.location.search);
     var script = params.get("script");
+    var url = params.get("url");
 
     if(script != null)
-    {
-        var decompressed = LZString.decompressFromEncodedURIComponent(script);
-        if(decompressed == null)
-            decompressed = "-- error while decoding URL";
+        read_script(script);
+    else if(url != null)
+        load_file(url);
+}
 
-        editor.doc.setValue(decompressed);
-    }
+function read_script(script)
+{
+    var decompressed = LZString.decompressFromEncodedURIComponent(script);
+    if(decompressed == null)
+        decompressed = "-- error while decoding URL";
+
+    editor.doc.setValue(decompressed);
 }
 
 function encode_script(s)
 {
     var compressed = LZString.compressToEncodedURIComponent(s);
     window.history.pushState(null, "", "?script=" + compressed);
+}
+
+function load_file(url)
+{
+    var xhttp = new XMLHttpRequest();
+    xhttp.onload = function() {
+        editor.doc.setValue(xhttp.responseText);
+    };
+    xhttp.open("GET", url, true);
+    xhttp.send();
 }
