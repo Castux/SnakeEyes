@@ -81,6 +81,7 @@ function run()
     }
 
     encode_script(script);
+    create_chart();
 }
 
 function check_url()
@@ -118,4 +119,29 @@ function load_file(url)
     };
     xhttp.open("GET", url, true);
     xhttp.send();
+}
+
+function create_chart()
+{
+    var ctx = document.getElementById('chartCanvas');
+    var myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+            datasets: [{
+                label: '# of Votes',
+                data: [0.12, 0.19, 0.3, 0.5, 0.2, 0.3],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            }
+        }
+    });
 }
