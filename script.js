@@ -5,7 +5,7 @@ const lualib   = fengari.lualib;
 const interop  = fengari.interop;
 
 var editor;
-var output;
+var outputContainer;
 
 function setup()
 {
@@ -15,20 +15,28 @@ function setup()
         mode: "lua"
     });
 
-    output = document.getElementById("output");
+    outputContainer = document.getElementById("outputContainer");
 
     check_url();
 }
 
 function clear_output()
 {
-    output.innerHTML = "";
+    outputContainer.innerHTML = "";
 }
 
 function write_to_output(s)
 {
+    if(outputContainer.lastChild == null ||
+        !outputContainer.lastChild.classList.contains("textOutput"))
+    {
+        var pre = document.createElement("pre");
+        pre.classList.add("textOutput");
+        outputContainer.appendChild(pre);
+    }
+
     var text = document.createTextNode(s);
-    output.appendChild(text);
+    outputContainer.lastChild.appendChild(text);
 }
 
 function run()
@@ -36,10 +44,15 @@ function run()
     clear_output();
 
     var script = editor.doc.getValue();
+    encode_script(script);
 
     const L = lauxlib.luaL_newstate();
     lualib.luaL_openlibs(L);
     lauxlib.luaL_requiref(L, "js", interop.luaopen_js, 0);
+    lua.lua_atnativeerror(L, (x) => {
+        console.log("Native error:");
+        console.log(x);
+    });
 
     lauxlib.luaL_loadfile(L, fengari.to_luastring("dice-web.lua"));
     lua.lua_call(L, 0, 0);
@@ -47,12 +60,11 @@ function run()
     var status = lauxlib.luaL_loadstring(L, fengari.to_luastring(script)) ||
         lua.lua_pcall(L, 0, 0, 0);
 
-    if(status != lua.LUA_OK)
+    if(status > lua.LUA_OK)
     {
-        write_to_output(fengari.to_jsstring(lua.lua_tostring(L, -1)) + "\n");
+        write_to_output(fengari.to_jsstring(lua.lua_getstring(L, -1)) + "\n");
     }
 
-    encode_script(script);
 }
 
 function check_url()
