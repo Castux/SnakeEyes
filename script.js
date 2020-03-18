@@ -62,7 +62,7 @@ function run()
 
     if(status > lua.LUA_OK)
     {
-        write_to_output(fengari.to_jsstring(lua.lua_getstring(L, -1)) + "\n");
+        write_to_output(fengari.to_jsstring(lua.lua_tolstring(L, -1)) + "\n");
     }
 
 }
@@ -140,12 +140,10 @@ function plot(labels, datasets)
 
 function create_chart(data)
 {
-    console.log(data);
-
     var ctx = document.getElementById('chartCanvas');
     var canvasContainer = document.createElement("div");
     var canvas = document.createElement("canvas");
-    
+
     canvasContainer.appendChild(canvas);
     outputContainer.appendChild(canvasContainer);
 
