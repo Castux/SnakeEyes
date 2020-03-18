@@ -142,7 +142,10 @@ function create_chart(data)
     console.log(data);
 
     var ctx = document.getElementById('chartCanvas');
-    var myChart = new Chart(ctx, {
+    var canvas = document.createElement("canvas");
+    outputContainer.appendChild(canvas);
+
+    var myChart = new Chart(canvas, {
         type: 'line',
         data: data,
         options: {
