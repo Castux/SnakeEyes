@@ -12,7 +12,9 @@ function setup()
     var myTextarea = document.getElementById("code");
     editor = CodeMirror.fromTextArea(myTextarea, {
         lineNumbers: true,
-        mode: "lua"
+        mode: "lua",
+        indentWithTabs: true,
+        indentUnit: 4
     });
 
     outputContainer = document.getElementById("outputContainer");
