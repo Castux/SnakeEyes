@@ -2,6 +2,7 @@ const luaconf  = fengari.luaconf;
 const lua      = fengari.lua;
 const lauxlib  = fengari.lauxlib;
 const lualib   = fengari.lualib;
+const interop  = fengari.interop;
 
 var editor;
 var output;
@@ -30,24 +31,6 @@ function write_to_output(s)
     output.appendChild(text);
 }
 
-const luaB_print = function(L) {
-    let n = lua.lua_gettop(L); /* number of arguments */
-    lua.lua_getglobal(L, fengari.to_luastring("tostring", true));
-    for (let i = 1; i <= n; i++) {
-        lua.lua_pushvalue(L, -1);  /* function to be called */
-        lua.lua_pushvalue(L, i);  /* value to print */
-        lua.lua_call(L, 1, 1);
-        let s = lua.lua_tolstring(L, -1);
-        if (s === null)
-            return lauxlib.luaL_error(L, fengari.to_luastring("'tostring' must return a string to 'print'"));
-        if (i > 1) write_to_output("\t");
-        write_to_output(fengari.to_jsstring(s));
-        lua.lua_pop(L, 1);
-    }
-    write_to_output("\n");
-    return 0;
-};
-
 function run()
 {
     clear_output();
@@ -56,19 +39,14 @@ function run()
 
     const L = lauxlib.luaL_newstate();
     lualib.luaL_openlibs(L);
+    lauxlib.luaL_requiref(L, "js", interop.luaopen_js, 0);
+
+    lauxlib.luaL_loadfile(L, fengari.to_luastring("dice-web.lua"));
+    lua.lua_call(L, 0, 0);
 
     var status = lauxlib.luaL_loadstring(L, fengari.to_luastring(script));
-    var result = "";
-
     if(status == lua.LUA_OK)
     {
-        lauxlib.luaL_loadfile(L, fengari.to_luastring("dice.lua"));
-        lua.lua_call(L, 0, 1);
-        lua.lua_setupvalue(L, -2, 1);
-
-        lua.lua_pushjsfunction(L, luaB_print);
-        lua.lua_setglobal(L, fengari.to_luastring("print"));
-
         var call_result = lua.lua_pcall(L, 0, 0, 0);
         if (call_result != lua.LUA_OK)
         {
