@@ -118,6 +118,19 @@ function to_js_array(luatable)
     return arr;
 }
 
+const colors = [
+    "rgba(52, 152, 219, 0.8)",
+    "rgba(155, 89, 182, 0.8)",
+    "rgba(233, 30, 99, 0.8)",
+    "rgba(241, 196, 15, 0.8)",
+    "rgba(230, 126, 34, 0.8)",
+    "rgba(231, 76, 60, 0.8)",
+    "rgba(149, 165, 166, 0.8)",
+    "rgba(96, 125, 139, 0.8)",
+    "rgba(26, 188, 156, 0.8)",
+    "rgba(46, 204, 113, 0.8)"
+];
+
 function plot(labels, datasets)
 {
     labels = to_js_array(labels);
@@ -130,7 +143,9 @@ function plot(labels, datasets)
             label: datasets[i].get("label"),
             lineTension: 0,
             type: datasets[i].get("type"),
-            fill: datasets[i].get("type") == "line" ? false : null
+            fill: datasets[i].get("type") == "line" ? false : null,
+            backgroundColor: colors[i % colors.length],
+            borderColor: colors[i % colors.length]
         };
     }
 
