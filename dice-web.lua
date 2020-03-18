@@ -17,6 +17,18 @@ function print(...)
     write "\n"
 end
 
+function plot(labels, datasets)
+
+    assert(type(labels) == "table", "labels should be a table")
+    assert(type(datasets) == "table", "datasets should be a table")
+
+    for i,v in ipairs(datasets) do
+        assert(type(v) == "table", "datasets should be tables")
+    end
+
+    js.global:plot(labels, datasets)
+end
+
 d = require "dice".new
 
 --[[ Environment setup ]]

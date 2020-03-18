@@ -53,7 +53,6 @@ function run()
     }
 
     encode_script(script);
-    create_chart();
 }
 
 function check_url()
@@ -93,27 +92,44 @@ function load_file(url)
     xhttp.send();
 }
 
-function create_chart()
+function to_js_array(luatable)
 {
+    var arr = [];
+    var i = 1;
+    while(luatable.has(i))
+    {
+        arr.push(luatable.get(i));
+        i++;
+    }
+    return arr;
+}
+
+function plot(labels, datasets)
+{
+    labels = to_js_array(labels);
+    datasets = to_js_array(datasets);
+
+    for(var i = 0; i < datasets.length ; i++)
+    {
+        datasets[i] = {
+            data: to_js_array(datasets[i]),
+            label: datasets[i].get("label")
+        };
+    }
+
+    create_chart({
+        labels: labels,
+        datasets: datasets
+    });
+}
+
+function create_chart(data)
+{
+    console.log(data);
+
     var ctx = document.getElementById('chartCanvas');
     var myChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-            datasets: [{
-                label: '# of Votes',
-                data: [0.12, 0.19, 0.3, 0.5, 0.2, 0.3],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        beginAtZero: true
-                    }
-                }]
-            }
-        }
+        type: 'line',
+        data: data
     });
 }
