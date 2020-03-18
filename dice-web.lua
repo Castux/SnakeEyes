@@ -25,6 +25,9 @@ do
 	local mt =
 	{
 		__index = function(t,k)
+
+            if math[k] then return math[k] end
+
 			local n = k:match("^d(%d+)$")
 			if n then
 				return d(tonumber(n))
@@ -35,5 +38,3 @@ do
 
 	setmetatable(_ENV, mt)
 end
-
-require = nil
