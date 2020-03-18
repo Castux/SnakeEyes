@@ -12,6 +12,8 @@ end
 --[[ Die ]]
 
 Die.__index = Die
+Die.is_die = is_die
+Die.is_dice_collection = is_dice_collection
 
 function Die.new(outcomes, probabilities)
 
@@ -81,7 +83,11 @@ local function fmt(x)
 	return string.format("%6.2f%%", x * 100)
 end
 
-function Die:summary()
+function Die:compute_stats()
+
+	if self.outcomes then
+		return
+	end
 
 	local boolean = false
 	local outcomes = {}
@@ -109,14 +115,29 @@ function Die:summary()
 		end
 	end
 
+	self.stats =
+	{
+		boolean = boolean,
+		outcomes = outcomes,
+		lte = lte,
+		gte = gte
+	}
+
+	return self.stats
+end
+
+function Die:summary()
+
+	self:compute_stats()
+
 	local lines = {}
-	for i,v in ipairs(outcomes) do
+	for i,v in ipairs(self.stats.outcomes) do
 		local line =
 		{
 			tostring(v),
 			fmt(self.data[v]),
-			(not boolean) and fmt(lte[i]) or nil,
-			(not boolean) and fmt(gte[i]) or nil,
+			(not self.stats.boolean) and fmt(self.stats.lte[i]) or nil,
+			(not self.stats.boolean) and fmt(self.stats.gte[i]) or nil,
 		}
 
 		table.insert(lines, table.concat(line, "\t"))

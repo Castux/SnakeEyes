@@ -1,4 +1,5 @@
 local js = require "js"
+local dice = require "dice"
 
 function write(...)
     for _,v in ipairs{...} do
@@ -17,7 +18,7 @@ function print(...)
     write "\n"
 end
 
-function plot(labels, datasets)
+local function plot_raw(labels, datasets)
 
     assert(type(labels) == "table", "labels should be a table")
     assert(type(datasets) == "table", "datasets should be a table")
@@ -29,9 +30,44 @@ function plot(labels, datasets)
     js.global:plot(labels, datasets)
 end
 
-d = require "dice".new
+local function plot_single(die, name)
+
+    local stats = die:compute_stats()
+    name = name or ""
+
+    local probas = {}
+    for i,v in ipairs(stats.outcomes) do
+        probas[i] = die(v)
+    end
+
+    probas.label = name .. " (=)"
+    probas.type = "bar"
+    stats.lte.label = name .. " (<=)"
+    stats.lte.type = "line"
+    stats.gte.label = name .. " (>=)"
+    stats.gte.type = "line"
+
+    plot_raw(stats.outcomes, { probas, stats.lte, stats.gte })
+end
+
+function plot(...)
+
+    local args = {...}
+
+    if dice.is_die(args[1]) then
+        plot_single(args[1], args[2])
+    elseif dice.is_dice_collection(args[1]) then
+        plot_single(args[1]:sum(), args[2])
+    else
+        plot_raw(...)
+    end
+
+end
+
 
 --[[ Environment setup ]]
+
+d = dice.new
 
 do
 	local mt =

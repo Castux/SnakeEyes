@@ -113,7 +113,9 @@ function plot(labels, datasets)
     {
         datasets[i] = {
             data: to_js_array(datasets[i]),
-            label: datasets[i].get("label")
+            label: datasets[i].get("label"),
+            lineTension: 0,
+            type: datasets[i].get("type")
         };
     }
 
@@ -130,6 +132,17 @@ function create_chart(data)
     var ctx = document.getElementById('chartCanvas');
     var myChart = new Chart(ctx, {
         type: 'line',
-        data: data
+        data: data,
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        callback: function(value, index, values) {
+                            return (value * 100).toFixed(2) + "%" ;
+                        }
+                    }
+                }]
+            }
+        }
     });
 }
