@@ -127,7 +127,8 @@ function plot(labels, datasets)
             data: to_js_array(datasets[i]),
             label: datasets[i].get("label"),
             lineTension: 0,
-            type: datasets[i].get("type")
+            type: datasets[i].get("type"),
+            fill: datasets[i].get("type") == "line" ? false : null
         };
     }
 
@@ -142,11 +143,16 @@ function create_chart(data)
     console.log(data);
 
     var ctx = document.getElementById('chartCanvas');
+    var canvasContainer = document.createElement("div");
     var canvas = document.createElement("canvas");
-    outputContainer.appendChild(canvas);
+    
+    canvasContainer.appendChild(canvas);
+    outputContainer.appendChild(canvasContainer);
+
+    canvasContainer.classList.add("canvasContainer");
 
     var myChart = new Chart(canvas, {
-        type: 'line',
+        type: 'bar',
         data: data,
         options: {
             scales: {
@@ -154,7 +160,8 @@ function create_chart(data)
                     ticks: {
                         callback: function(value, index, values) {
                             return (value * 100).toFixed(2) + "%" ;
-                        }
+                        },
+                        beginAtZero: true
                     }
                 }]
             }

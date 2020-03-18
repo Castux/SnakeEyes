@@ -1,6 +1,6 @@
 body
 {
-    width: 900px;
+    width: 800px;
     margin: 0 auto;
 }
 
@@ -17,4 +17,14 @@ body
 #buttons
 {
     margin: 10px;
+}
+
+.canvasContainer
+{
+    margin: 0 20px;
+}
+
+.textOutput
+{
+    margin: 1em;
 }
