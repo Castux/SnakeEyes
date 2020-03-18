@@ -44,16 +44,10 @@ function run()
     lauxlib.luaL_loadfile(L, fengari.to_luastring("dice-web.lua"));
     lua.lua_call(L, 0, 0);
 
-    var status = lauxlib.luaL_loadstring(L, fengari.to_luastring(script));
-    if(status == lua.LUA_OK)
-    {
-        var call_result = lua.lua_pcall(L, 0, 0, 0);
-        if (call_result != lua.LUA_OK)
-        {
-            write_to_output(fengari.to_jsstring(lua.lua_tostring(L, -1)) + "\n");
-        }
-    }
-    else
+    var status = lauxlib.luaL_loadstring(L, fengari.to_luastring(script)) ||
+        lua.lua_pcall(L, 0, 0, 0);
+
+    if(status != lua.LUA_OK)
     {
         write_to_output(fengari.to_jsstring(lua.lua_tostring(L, -1)) + "\n");
     }
