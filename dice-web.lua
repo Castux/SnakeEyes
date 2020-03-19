@@ -50,7 +50,21 @@ local function plot_single(die, name)
     plot_raw(stats.outcomes, { probas, stats.lte, stats.gte }, false, true)
 end
 
-local function plot_multi(dice, labels, cdf)
+local function transpose_datasets(labels, outcomes, datasets)
+
+    local res = {}
+
+    for i,dataset in ipairs(datasets) do
+        for j = 1,#outcomes do
+            res[j] = res[j] or { label = outcomes[j]}
+            res[j][i] = dataset[j]
+        end
+    end
+
+    return res
+end
+
+local function plot_multi(dice, labels, cdf, transpose)
 
     local outcomes = {}
     local datasets = {}
@@ -98,7 +112,12 @@ local function plot_multi(dice, labels, cdf)
         end
     end
 
-    plot_raw(outcomes, datasets, false, true)
+    if transpose then
+        datasets = transpose_datasets(labels, outcomes, datasets)
+        plot_raw(labels, datasets, true, true)
+    else
+        plot_raw(outcomes, datasets, false, true)
+    end
 end
 
 local function treat_plot_args(...)
@@ -157,6 +176,11 @@ end
 function plot_cdf2(...)
     local dice, labels = treat_plot_args(...)
     plot_multi(dice, labels, "cdf2")
+end
+
+function plot_transposed(...)
+    local dice, labels = treat_plot_args(...)
+    plot_multi(dice, labels, nil, true)
 end
 
 --[[ Environment setup ]]
