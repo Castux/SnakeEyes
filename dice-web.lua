@@ -40,14 +40,22 @@ local function plot_single(die, name)
         probas[i] = die(v)
     end
 
+    local datasets = { probas }
+
     probas.label = name .. " (=)"
     probas.type = "bar"
-    stats.lte.label = name .. " (<=)"
-    stats.lte.type = "line"
-    stats.gte.label = name .. " (>=)"
-    stats.gte.type = "line"
 
-    plot_raw(stats.outcomes, { probas, stats.lte, stats.gte }, false, true)
+    if not stats.boolean then
+        stats.lte.label = name .. " (<=)"
+        stats.lte.type = "line"
+        stats.gte.label = name .. " (>=)"
+        stats.gte.type = "line"
+
+        table.insert(datasets, stats.lte)
+        table.insert(datasets, stats.gte)
+    end
+
+    plot_raw(stats.outcomes, datasets, false, true)
 end
 
 local function transpose_datasets(labels, outcomes, datasets)
@@ -56,11 +64,11 @@ local function transpose_datasets(labels, outcomes, datasets)
 
     for i,dataset in ipairs(datasets) do
         for j = 1,#outcomes do
-            res[j] = res[j] or { label = outcomes[j]}
+            res[j] = res[j] or { label = tostring(outcomes[j]) }
             res[j][i] = dataset[j]
         end
 
-        if not labels[i] then
+        if labels[i] == nil then
             labels[i] = ""
         end
     end
@@ -103,13 +111,20 @@ local function plot_multi(dice, labels, cdf, transpose)
 
             table.insert(tmp, k)
         end
-        table.sort(tmp)
+
+        if type_found ~= "boolean" then
+            table.sort(tmp)
+        elseif cdf then
+            error("cannot plot CDF for boolean dice")
+        end
+
 		outcomes = tmp
     end
 
     for i,outcome in ipairs(outcomes) do
         for j,die in ipairs(dice) do
-            local proba = cdf == "cdf" and die:lte(outcome)(true) or
+            local proba =
+                cdf == "cdf" and die:lte(outcome)(true) or
                 cdf == "cdf2" and die:gte(outcome)(true) or
                 die(outcome)
             datasets[j][i] = proba ~= 0 and proba or nil
