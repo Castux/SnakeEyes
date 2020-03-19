@@ -184,7 +184,7 @@ const colors = [
     "rgba(46, 204, 113, 0.8)"
 ];
 
-function plot(labels, datasets, stacked)
+function plot(labels, datasets, stacked, percentage)
 {
     labels = to_js_array(labels);
     datasets = to_js_array(datasets);
@@ -205,10 +205,10 @@ function plot(labels, datasets, stacked)
     create_chart({
         labels: labels,
         datasets: datasets
-    }, stacked);
+    }, stacked, percentage);
 }
 
-function create_chart(data, stacked)
+function create_chart(data, stacked, percentage)
 {
     var ctx = document.getElementById('chartCanvas');
     var canvasContainer = document.createElement("div");
@@ -219,18 +219,25 @@ function create_chart(data, stacked)
 
     canvasContainer.classList.add("canvasContainer");
 
+    var ticks = {
+        callback: function(value, index, values) {
+            return (value * 100).toFixed(2) + "%" ;
+        },
+        beginAtZero: true
+    };
+
+    if(!percentage)
+    {
+        delete ticks["callback"];
+    }
+
     var myChart = new Chart(canvas, {
         type: 'bar',
         data: data,
         options: {
             scales: {
                 yAxes: [{
-                    ticks: {
-                        callback: function(value, index, values) {
-                            return (value * 100).toFixed(2) + "%" ;
-                        },
-                        beginAtZero: true
-                    },
+                    ticks: ticks,
                     stacked: stacked
                 }],
                 xAxes: [{

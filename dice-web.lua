@@ -18,7 +18,7 @@ function print(...)
     write "\n"
 end
 
-function plot_raw(labels, datasets, stacked)
+function plot_raw(labels, datasets, stacked, percentage)
 
     assert(type(labels) == "table", "labels should be a table")
     assert(type(datasets) == "table", "datasets should be a table")
@@ -27,7 +27,7 @@ function plot_raw(labels, datasets, stacked)
         assert(type(v) == "table", "datasets should be tables")
     end
 
-    js.global:plot(labels, datasets, stacked)
+    js.global:plot(labels, datasets, stacked, percentage)
 end
 
 local function plot_single(die, name)
@@ -47,7 +47,7 @@ local function plot_single(die, name)
     stats.gte.label = name .. " (>=)"
     stats.gte.type = "line"
 
-    plot_raw(stats.outcomes, { probas, stats.lte, stats.gte })
+    plot_raw(stats.outcomes, { probas, stats.lte, stats.gte }, false, true)
 end
 
 local function plot_multi(dice, labels)
@@ -96,7 +96,7 @@ local function plot_multi(dice, labels)
         end
     end
 
-    plot_raw(outcomes, datasets)
+    plot_raw(outcomes, datasets, false, true)
 end
 
 function plot(...)
