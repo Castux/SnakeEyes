@@ -41,6 +41,15 @@ function write_to_output(s)
     outputContainer.lastChild.appendChild(text);
 }
 
+function open_url()
+{
+    var url = prompt("URL of the file to load", "");
+    load_file(url);
+
+    url = encodeURI(url);
+    window.history.pushState(null, "", "?url=" + url);
+}
+
 function run()
 {
     clear_output();
