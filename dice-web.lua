@@ -59,6 +59,10 @@ local function transpose_datasets(labels, outcomes, datasets)
             res[j] = res[j] or { label = outcomes[j]}
             res[j][i] = dataset[j]
         end
+
+        if not labels[i] then
+            labels[i] = ""
+        end
     end
 
     return res
