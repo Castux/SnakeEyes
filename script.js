@@ -96,7 +96,7 @@ function run()
     var status = lauxlib.luaL_loadfile(L, fengari.to_luastring("dice-web.lua"))
         || docall(L, 0, 0);
     report(L, status);
-    
+
     if(status != lua.LUA_OK)
         return;
 
@@ -184,7 +184,7 @@ const colors = [
     "rgba(46, 204, 113, 0.8)"
 ];
 
-function plot(labels, datasets)
+function plot(labels, datasets, stacked)
 {
     labels = to_js_array(labels);
     datasets = to_js_array(datasets);
@@ -205,10 +205,10 @@ function plot(labels, datasets)
     create_chart({
         labels: labels,
         datasets: datasets
-    });
+    }, stacked);
 }
 
-function create_chart(data)
+function create_chart(data, stacked)
 {
     var ctx = document.getElementById('chartCanvas');
     var canvasContainer = document.createElement("div");
@@ -230,7 +230,11 @@ function create_chart(data)
                             return (value * 100).toFixed(2) + "%" ;
                         },
                         beginAtZero: true
-                    }
+                    },
+                    stacked: stacked
+                }],
+                xAxes: [{
+                    stacked: stacked
                 }]
             }
         }

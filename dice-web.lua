@@ -18,7 +18,7 @@ function print(...)
     write "\n"
 end
 
-function plot_raw(labels, datasets)
+function plot_raw(labels, datasets, stacked)
 
     assert(type(labels) == "table", "labels should be a table")
     assert(type(datasets) == "table", "datasets should be a table")
@@ -27,7 +27,7 @@ function plot_raw(labels, datasets)
         assert(type(v) == "table", "datasets should be tables")
     end
 
-    js.global:plot(labels, datasets)
+    js.global:plot(labels, datasets, stacked)
 end
 
 local function plot_single(die, name)
