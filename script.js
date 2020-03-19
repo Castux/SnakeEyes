@@ -105,6 +105,9 @@ function encode_script(s)
 
 function load_file(url)
 {
+    if(url == null || url == "")
+        return;
+
     var xhttp = new XMLHttpRequest();
     xhttp.onload = function() {
         editor.doc.setValue(xhttp.responseText);
