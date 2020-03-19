@@ -45,8 +45,6 @@ function open_url()
 {
     var url = prompt("URL of the file to load", "");
     load_file(url);
-
-    url = encodeURI(url);
     window.history.pushState(null, "", "?url=" + url);
 }
 
