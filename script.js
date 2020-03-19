@@ -119,15 +119,24 @@ function load_file(url)
     xhttp.send();
 }
 
-function to_js_array(luatable)
+function to_js_array(luatable, size)
 {
     var arr = [];
-    var i = 1;
-    while(luatable.has(i))
+    if(size != null)
     {
-        arr.push(luatable.get(i));
-        i++;
+        for(var i = 1; i <= size ; i++)
+            arr[i - 1] = luatable.get(i);
     }
+    else
+    {
+        var i = 1;
+        while(luatable.has(i))
+        {
+            arr[i - 1] = luatable.get(i);
+            i++;
+        }
+    }
+
     return arr;
 }
 
@@ -152,7 +161,7 @@ function plot(labels, datasets)
     for(var i = 0; i < datasets.length ; i++)
     {
         datasets[i] = {
-            data: to_js_array(datasets[i]),
+            data: to_js_array(datasets[i], labels.length),
             label: datasets[i].get("label"),
             lineTension: 0,
             type: datasets[i].get("type"),

@@ -69,7 +69,8 @@ local function plot_multi(dice, labels)
 
         datasets[i] =
         {
-            label = labels[i]
+            label = labels[i],
+            type = "line"
         }
     end
 
@@ -84,7 +85,8 @@ local function plot_multi(dice, labels)
 
     for i,outcome in ipairs(outcomes) do
         for j,die in ipairs(dice) do
-            datasets[j][i] = die(outcome)
+            local proba = die(outcome)
+            datasets[j][i] = proba ~= 0 and proba or nil
         end
     end
 
@@ -94,6 +96,14 @@ end
 function plot(...)
 
     local args = {...}
+
+    if #args == 1 and
+        type(args[1]) == "table" and
+        not Die.is_die(args[1]) and
+        not Die.is_dice_collection(args[1]) then
+
+        args = args[1]
+    end
 
     local dice = {}
     local labels = {}
