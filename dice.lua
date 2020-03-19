@@ -104,14 +104,13 @@ function Die:compute_stats()
 
 		local sum = 0
 		for i = 1,#outcomes do
+			gte[i] = 1 - sum
 			sum = sum + self.data[outcomes[i]]
 			lte[i] = sum
-		end
 
-		sum = 0
-		for i = #outcomes,1,-1 do
-			sum = sum + self.data[outcomes[i]]
-			gte[i] = sum
+			if i == #outcomes then
+				lte[i] = 1
+			end
 		end
 	end
 
