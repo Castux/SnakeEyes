@@ -1,5 +1,5 @@
 local js = require "js"
-local dice = require "dice"
+local Die = require "dice"
 
 function write(...)
     for _,v in ipairs{...} do
@@ -18,7 +18,7 @@ function print(...)
     write "\n"
 end
 
-local function plot_raw(labels, datasets)
+function plot_raw(labels, datasets)
 
     assert(type(labels) == "table", "labels should be a table")
     assert(type(datasets) == "table", "datasets should be a table")
@@ -50,24 +50,84 @@ local function plot_single(die, name)
     plot_raw(stats.outcomes, { probas, stats.lte, stats.gte })
 end
 
+local function plot_multi(dice, labels)
+
+    local outcomes = {}
+    local datasets = {}
+
+    for i,die in ipairs(dice) do
+
+        if Die.is_dice_collection(die) then
+            die = die:sum()
+            dice[i] = die
+        end
+
+        local stats = die:compute_stats()
+        for _,v in ipairs(stats.outcomes) do
+            outcomes[v] = true
+        end
+
+        datasets[i] =
+        {
+            label = labels[i]
+        }
+    end
+
+    do
+        local tmp = {}
+        for k,_ in pairs(outcomes) do
+            table.insert(tmp, k)
+        end
+        table.sort(tmp)
+		outcomes = tmp
+    end
+
+    for i,outcome in ipairs(outcomes) do
+        for j,die in ipairs(dice) do
+            datasets[j][i] = die(outcome)
+        end
+    end
+
+    plot_raw(outcomes, datasets)
+end
+
 function plot(...)
 
     local args = {...}
 
-    if dice.is_die(args[1]) then
-        plot_single(args[1], args[2])
-    elseif dice.is_dice_collection(args[1]) then
-        plot_single(args[1]:sum(), args[2])
-    else
-        plot_raw(...)
+    local dice = {}
+    local labels = {}
+
+    local i = 1
+    while i <= #args do
+        local v = args[i]
+
+        if Die.is_dice_collection(v) then
+            v = v:sum()
+        end
+
+        if Die.is_die(v) then
+            table.insert(dice, v)
+
+            if type(args[i + 1]) == "string" then
+                labels[#dice] = args[i + 1]
+            end
+        end
+
+        i = i + 1
     end
 
+    if #dice == 1 then
+        plot_single(dice[1], labels[1])
+    else
+        plot_multi(dice, labels)
+    end
 end
 
 
 --[[ Environment setup ]]
 
-d = dice.new
+d = Die.new
 
 do
 	local mt =
