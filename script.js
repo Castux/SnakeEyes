@@ -93,10 +93,10 @@ function run()
         console.log(x);
     });
 
-    lauxlib.luaL_loadfile(L, fengari.to_luastring("dice-web.lua"));
-    var status = docall(L, 0, 0);
+    var status = lauxlib.luaL_loadfile(L, fengari.to_luastring("dice-web.lua"))
+        || docall(L, 0, 0);
     report(L, status);
-
+    
     if(status != lua.LUA_OK)
         return;
 
