@@ -75,8 +75,14 @@ local function plot_multi(dice, labels)
     end
 
     do
+        local type_found
         local tmp = {}
         for k,_ in pairs(outcomes) do
+            if not type_found then
+                type_found = type(k)
+            end
+            assert(type_found == type(k), "cannot plot dice of different types")
+
             table.insert(tmp, k)
         end
         table.sort(tmp)
