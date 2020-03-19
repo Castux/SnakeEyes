@@ -109,6 +109,9 @@ function load_file(url)
     xhttp.onload = function() {
         editor.doc.setValue(xhttp.responseText);
     };
+    xhttp.onerror = function() {
+        editor.doc.setValue("-- error occured while loading " + url);
+    }
     xhttp.open("GET", url, true);
     xhttp.send();
 }
