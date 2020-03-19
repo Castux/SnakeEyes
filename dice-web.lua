@@ -50,7 +50,7 @@ local function plot_single(die, name)
     plot_raw(stats.outcomes, { probas, stats.lte, stats.gte }, false, true)
 end
 
-local function plot_multi(dice, labels)
+local function plot_multi(dice, labels, cdf)
 
     local outcomes = {}
     local datasets = {}
@@ -91,7 +91,9 @@ local function plot_multi(dice, labels)
 
     for i,outcome in ipairs(outcomes) do
         for j,die in ipairs(dice) do
-            local proba = die(outcome)
+            local proba = cdf == "cdf" and die:lte(outcome)(true) or
+                cdf == "cdf2" and die:gte(outcome)(true) or
+                die(outcome)
             datasets[j][i] = proba ~= 0 and proba or nil
         end
     end
@@ -99,7 +101,7 @@ local function plot_multi(dice, labels)
     plot_raw(outcomes, datasets, false, true)
 end
 
-function plot(...)
+local function treat_plot_args(...)
 
     local args = {...}
 
@@ -133,6 +135,13 @@ function plot(...)
         i = i + 1
     end
 
+    return dice, labels
+end
+
+function plot(...)
+
+    local dice, labels = treat_plot_args(...)
+
     if #dice == 1 then
         plot_single(dice[1], labels[1])
     else
@@ -140,6 +149,15 @@ function plot(...)
     end
 end
 
+function plot_cdf(...)
+    local dice, labels = treat_plot_args(...)
+    plot_multi(dice, labels, "cdf")
+end
+
+function plot_cdf2(...)
+    local dice, labels = treat_plot_args(...)
+    plot_multi(dice, labels, "cdf2")
+end
 
 --[[ Environment setup ]]
 
