@@ -48,30 +48,34 @@ function open_url()
     window.history.pushState(null, "", "?url=" + url);
 }
 
-const report = function(L, status) {
-    if (status !== lua.LUA_OK) {
+const report = function(L, status)
+{
+    if (status !== lua.LUA_OK)
+    {
         write_to_output(lua.lua_tojsstring(L, -1) + "\n");
         lua.lua_pop(L, 1);
     }
     return status;
 };
 
-const msghandler = function(L) {
+const msg_handler = function(L)
+{
     let msg = lua.lua_tostring(L, 1);
-    if (msg === null) {  /* is error object not a string? */
-        if (lauxlib.luaL_callmeta(L, 1, fengari.to_luastring("__tostring")) &&  /* does it have a metamethod */
-          lua.lua_type(L, -1) == LUA_TSTRING)  /* that produces a string? */
-            return 1;  /* that is the message */
+    if (msg === null)
+    {
+        if (lauxlib.luaL_callmeta(L, 1, fengari.to_luastring("__tostring")) && lua.lua_type(L, -1) == LUA_TSTRING)
+            return 1;
         else
             msg = lua.lua_pushstring(L, fengari.to_luastring(`(error object is a ${fengari.to_jsstring(lauxlib.luaL_typename(L, 1))} value)`));
     }
-    lauxlib.luaL_traceback(L, L, msg, 1);  /* append a standard traceback */
-    return 1;  /* return the traceback */
+    lauxlib.luaL_traceback(L, L, msg, 1);
+    return 1;
 };
 
-const docall = function(L, narg, nres) {
+const do_call = function(L, narg, nres)
+{
     let base = lua.lua_gettop(L) - narg;
-    lua.lua_pushcfunction(L, msghandler);
+    lua.lua_pushcfunction(L, msg_handler);
     lua.lua_insert(L, base);
     let status = lua.lua_pcall(L, narg, nres, base);
     lua.lua_remove(L, base);
@@ -94,7 +98,7 @@ function run()
     });
 
     var status = lauxlib.luaL_loadfile(L, fengari.to_luastring("dice-web.lua"))
-        || docall(L, 0, 0);
+        || do_call(L, 0, 0);
     report(L, status);
 
     if(status != lua.LUA_OK)
@@ -102,7 +106,7 @@ function run()
 
     var buffer = fengari.to_luastring(script);
     var status = lauxlib.luaL_loadbuffer(L, buffer, buffer.length, "SuperDice script")
-        || docall(L, 0, 0);
+        || do_call(L, 0, 0);
     report(L, status);
 
 }
