@@ -95,7 +95,7 @@ local function plot_multi(dice, labels, cdf, transpose)
 
         datasets[i] =
         {
-            label = labels[i],
+            label = labels[i] or "",
             type = "line"
         }
     end
