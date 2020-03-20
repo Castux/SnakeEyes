@@ -20,6 +20,14 @@ function setup()
     outputContainer = document.getElementById("outputContainer");
 
     check_url();
+
+    document.onkeyup = function(e)
+    {
+        if (e.ctrlKey && e.which == 13)
+        {
+            run();
+        }
+    };
 }
 
 function clear_output()
