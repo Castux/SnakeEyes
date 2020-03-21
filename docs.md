@@ -38,7 +38,7 @@ The entire contents of the Lua `math` library are in the global environment: `ab
 
 ### write
 
-Although the `io` library is not available, the `write` function is provided to replace `io.write`, and works similarly.
+Although the `io` library is not available, the `write` function is provided to replace `io.write`, and works similarly. `print` works as usual (placing tabs between its arguments).
 
 ### plot(die [, label])
 
@@ -81,19 +81,19 @@ If `stacked` is true, the graph will be stacked bars and/or lines, and if `perce
 
 Returns a string that summarizes the die: the sorted list of outcomes with their probabilities, as well as the cumulative distributions (probability to be lower or higher than a given outcome).
 
-This is what is also returned when a `Die` is converted to a string using `tostring` (and therefore when using `print`).
+This is what is also returned when a `Die` is converted to a string using `tostring` (and therefore when using `print` or `write`).
 
 ### Die:compute_stats()
 
 Returns a table with the following fields:
 
 - `boolean`: whether the die's outcomes are booleans or not
-- `outcomes`: the sorted list of possible outcomes of this die
+- `outcomes`: the sorted list of possible outcomes of this die (note that strings can be compared and sorted lexicographically in Lua)
 - `probabilities`: the probabilities associated with the outcomes, in the same order
 - `lte`: the cumulative distribution, that is, for each outcome, the probability of getting this outcome or a lower one (in the same order as `outcomes`)
 - `gte`: the other cumulative distribution: for each outcome, the probability of getting this outcome or a higher one (in the same order as `outcomes`)
 
-Fields `lte` and `gte` are omitted for boolean dice, and the `outcomes` table is not sorted, since booleans cannot be orderd.
+Fields `lte` and `gte` are omitted for boolean dice, and the `outcomes` table is not sorted, since booleans cannot be ordered.
 
 ### Die:apply(func)
 
@@ -128,7 +128,7 @@ A `Die` object can be called like a function to get the probability of the given
 
 ## `DiceCollection` object
 
-`DiceCollection` objects are created with the `..` operator for `Die` (eg. `a .. b .. c`), or multiplying a die to the left by a number (`4 * d5`).
+`DiceCollection` objects are created with the `..` operator for `Die` and `DiceCollection` (eg. `a .. b .. c`), or multiplying a die to the left by a number (`4 * d5`).
 
 The core method for `DiceCollection` is `apply`. Every other method is provided as a convenient shortcut for common dice computations.
 
