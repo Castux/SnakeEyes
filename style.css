@@ -59,6 +59,7 @@ a:hover
 
 .CodeMirror
 {
+    height: 30vh;
     border: 1px solid lightgrey;
     font-family: 'Ubuntu Mono', monospace;
 }
