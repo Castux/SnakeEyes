@@ -36,11 +36,52 @@ All globals `d1`, `d2`, `d3`, etc. (`d` followed by any number of digits) are pr
 
 The entire contents of the Lua `math` library are in the global environment: `abs`, `acos`, `asin`, `atan`, `ceil`, `cos`, `deg`, `exp`, `floor`, `fmod`, `huge`, `log`, `max`, `maxinteger`, `min`, `mininteger`, `modf`, `pi`, `rad`, `random`, `randomseed`, `sin`, `sqrt`, `tan`, `tointeger`, `type`, `ult`
 
+### write
+
+Although the `io` library is not available, the `write` function is provided to replace `io.write`, and works similarly.
+
+### plot(die [, label])
+
+Plots a single die: probabilities as a bar chart, and for a die with non boolean outcomes, the two cumulative distributions overlaid as lines. The optional `label` string is used in the plot's legend.
+
+### plot(die1 [, label1], die2 [, label2], ...)
+
+Plots the probabilities for multiple dice in a single plot, as lines. Each die can be followed by an optional string argument that will be used a label in the legend.
+
+### plot_cdf(die1 [, label1], die2 [, label2], ...)
+
+Similar to `plot` for multiple dice, but plots the cumulative distributions instead (probabilities of outcomes lower than or equal). Cannot be used with boolean-valued dice.
+
+Alternatively, the function can take a single table argument containing the dice and labels.
+
+### plot_cdf2(die1 [, label1], die2 [, label2], ...)
+
+Similar to `plot` for multiple dice, but plots the opposite cumulative distributions instead (probabilities of outcomes greater than or equal). Cannot be used with boolean-valued dice.
+
+Alternatively, the function can take a single table argument containing the dice and labels.
+
+### plot_transposed(die1 [, label1], die2 [, label2], ...)
+
+Plots multiple dice so that each die is a column of all its outcomes in a stacked bar chart. This can be useful to visualize and compare dice with a low number of outcomes.
+
+Alternatively, the function can take a single table argument containing the dice and labels.
+
+### plot_raw(labels, datasets, stacked, percentage)
+
+The library exposes the internal plotting function, for maximum flexibility. `labels` is an array of labels (the X axis) and `datasets` is an array containing the datasets to plot. Each dataset should be an array of values (same size as `labels`) and can optionally contain the following fields:
+
+- `label`: the name to use for the dataset in the legend
+- `type`: by default the charts are lines, but this can be set to the string `"bar"` instead
+
+If `stacked` is true, the graph will be stacked bars and/or lines, and if `percentage` is true, the Y axis will be displayed as percentages instead of direct values.
+
 ## `Die` object
 
 ### Die:summary()
 
 Returns a string that summarizes the die: the sorted list of outcomes with their probabilities, as well as the cumulative distributions (probability to be lower or higher than a given outcome).
+
+This is what is also returned when a `Die` is converted to a string using `tostring` (and therefore when using `print`).
 
 ### Die:compute_stats()
 
@@ -51,6 +92,8 @@ Returns a table with the following fields:
 - `probabilities`: the probabilities associated with the outcomes, in the same order
 - `lte`: the cumulative distribution, that is, for each outcome, the probability of getting this outcome or a lower one (in the same order as `outcomes`)
 - `gte`: the other cumulative distribution: for each outcome, the probability of getting this outcome or a higher one (in the same order as `outcomes`)
+
+Fields `lte` and `gte` are omitted for boolean dice, and the `outcomes` table is not sorted, since booleans cannot be orderd.
 
 ### Die:apply(func)
 
@@ -82,3 +125,5 @@ so that for instance `a:lt(b)` is equivalent to `(a .. b):apply(function(x,y) re
 ### Die(outcome)
 
 A `Die` object can be called like a function to get the probability of the given `outcome`. This will of course return 0 if the outcome is not possible on this die.
+
+## `DiceCollection` object
