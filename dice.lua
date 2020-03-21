@@ -98,14 +98,15 @@ function Die:compute_stats()
 		end
 	end
 
-	local lte, gte = {},{}
+	local probabilities, lte, gte = {},{},{}
 	if not boolean then
 		table.sort(outcomes)
 
 		local sum = 0
 		for i = 1,#outcomes do
+			probabilities[i] = self.data[outcomes[i]]
 			gte[i] = 1 - sum
-			sum = sum + self.data[outcomes[i]]
+			sum = sum + probabilities[i]
 			lte[i] = sum
 
 			if i == #outcomes then
@@ -118,6 +119,7 @@ function Die:compute_stats()
 	{
 		boolean = boolean,
 		outcomes = outcomes,
+		probabilities = probabilities,
 		lte = lte,
 		gte = gte
 	}
