@@ -12,19 +12,20 @@
 </head>
 <body>
     <div id="header">
-        <h1>SuperDice!</h1>
-        <div>
-            <a href="docs.html">Documentation</a>
-            <a href="docs.html">Documentation</a>
+        <img src="logo.svg"></img>
+        <span id="siteName">SuperDice!</span>
+        <a href="docs.html">Documentation</a>
+        <a href="docs.html">Documentation</a>
+    </div>
+    <div id="main">
+        <div id="codeContainer">
+            <textarea id="code"></textarea>
         </div>
+        <div id="buttons">
+            <button onclick="run();">Run (ctrl ↵)</button>
+        </div>
+        <div id="outputContainer"></div>
     </div>
-    <div id="codeContainer">
-        <textarea id="code"></textarea>
-    </div>
-    <div id="buttons">
-        <button onclick="run();">Run (ctrl ↵)</button>
-    </div>
-    <div id="outputContainer"></div>
 </body>
 <script>setup();</script>
 </html>
