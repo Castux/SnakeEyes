@@ -101,17 +101,17 @@ function Die:compute_stats()
 	local probabilities, lte, gte = {},{},{}
 	if not boolean then
 		table.sort(outcomes)
+	end
 
-		local sum = 0
-		for i = 1,#outcomes do
-			probabilities[i] = self.data[outcomes[i]]
-			gte[i] = 1 - sum
-			sum = sum + probabilities[i]
-			lte[i] = sum
+	local sum = 0
+	for i = 1,#outcomes do
+		probabilities[i] = self.data[outcomes[i]]
+		gte[i] = 1 - sum
+		sum = sum + probabilities[i]
+		lte[i] = sum
 
-			if i == #outcomes then
-				lte[i] = 1
-			end
+		if i == #outcomes then
+			lte[i] = 1
 		end
 	end
 
@@ -120,8 +120,8 @@ function Die:compute_stats()
 		boolean = boolean,
 		outcomes = outcomes,
 		probabilities = probabilities,
-		lte = lte,
-		gte = gte
+		lte = not boolean and lte or nil,
+		gte = not boolean and gte or nil
 	}
 
 	return self.stats
