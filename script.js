@@ -28,6 +28,9 @@ function setup()
             run();
         }
     };
+
+    Chart.defaults.global.defaultFontFamily = "'Ubuntu', sans-serif";
+    Chart.defaults.global.defaultFontSize = 16;
 }
 
 function clear_output()
