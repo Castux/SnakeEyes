@@ -333,6 +333,10 @@ function DiceCollection:all(func)
 	return self:count(func):eq(#self)
 end
 
+function DiceCollection:none(func)
+	return self:count(func):eq(0)
+end
+
 function DiceCollection:highest()
 	return self:accumulate(math.max)
 end
