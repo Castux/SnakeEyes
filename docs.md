@@ -127,3 +127,38 @@ so that for instance `a:lt(b)` is equivalent to `(a .. b):apply(function(x,y) re
 A `Die` object can be called like a function to get the probability of the given `outcome`. This will of course return 0 if the outcome is not possible on this die.
 
 ## `DiceCollection` object
+
+`DiceCollection` objects are created with the `..` operator for `Die` (eg. `a .. b .. c`), or multiplying a die to the left by a number (`4 * d5`).
+
+The core method for `DiceCollection` is `apply`. Every other method is provided as a convenient shortcut for common dice computations.
+
+### DiceCollection:apply(func)
+
+This is the main way to transform and combine dice. `apply` enumerates all possible combinations of outcomes for the dice in the collection, along with the probability of each such combination. It returns a new `Die` object where outcomes are the results of calling function `func` on each combination of outcomes.
+
+### DiceCollection:accumulate(func)
+
+Applies `func` to the first two dice of the collection, then to the result and to the third die, then to the result of that and to the fourth die, etc.
+
+This can be used to compute efficiently some common operations that can be done die by die instead of rolling all the dice first and applying the operation to the result.
+
+See for instance `sum`, which is defined exactly as `collection:accumulate(function(x,y) return x + y end)`.
+
+### DiceCollection:sum()
+
+Returns the `Die` which is the sum of all dice in the collection.
+
+### DiceCollection:count(value)
+
+Counts occurrences of `value` in the outcomes of the dice of the collection. Alternatively, `value` can be a function, in which case `count` counts the number of outcomes for which that function returns true.
+
+### DiceCollection:any(value)
+### DiceCollection:all(value)
+### DiceCollection:none(value)
+
+Returns a boolean die indicating the probability of getting any/all/no outcome equal to `value`. Similarly, `value` can be a function, in which case the die describes the probability of any/all/no outcome to return true when passed to that function.
+
+### DiceCollection:highest()
+### DiceCollection:lowest()
+
+Computes the distributions of the highest/lowest outcomes.
