@@ -1,6 +1,7 @@
 body
 {
-    font-family: sans-serif;
+    font-family: 'Ubuntu', sans-serif;
+    font-size: 16px;
     margin: 0px;
 }
 
@@ -8,21 +9,19 @@ body
 {
     background-color: rgba(52, 152, 219, 1);
     margin: 0px;
-    padding: 5px;
+    padding: 8px;
     width: 100%;
 
     color: white;
-
-    font-size: 18px
+    font-size: 20px;
 }
 
 #header > img
 {
-    width: 60px;
-    height: 60px;
+    width: 85px;
+    height: 85px;
     display: inline-block;
     vertical-align: middle;
-    margin-right: 10px;
 }
 
 #siteName
@@ -30,11 +29,12 @@ body
     font-weight: bold;
     display: inline-block;
     vertical-align: middle;
+    margin-left: 20px;
 }
 
 #header > a
 {
-    margin: 0 20px;
+    margin: 0 0 0 20px;
     display: inline-block;
     vertical-align: middle;
 }
@@ -53,13 +53,14 @@ a:hover
 #main
 {
     max-width: 800px;
+    padding: 10px;
     margin: 0 auto;
-    margin-top: 10px;
 }
 
 .CodeMirror
 {
     border: 1px solid lightgrey;
+    font-family: 'Ubuntu Mono', monospace;
 }
 
 #outputContainer
@@ -84,5 +85,6 @@ a:hover
     background-color: rgba(52, 152, 219, 0.1);
     border: 2px solid rgba(52, 152, 219, 0.5);
     border-radius: 10px;
-    padding: 2em;
+    padding: 1em;
+    font-family: 'Ubuntu Mono', monospace;
 }
