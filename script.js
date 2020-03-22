@@ -4,6 +4,10 @@ const lauxlib  = fengari.lauxlib;
 const lualib   = fengari.lualib;
 const interop  = fengari.interop;
 
+///////////
+// Setup //
+///////////
+
 var editor;
 var outputContainer;
 
@@ -16,14 +20,12 @@ function setup()
         indentWithTabs: true,
         indentUnit: 4
     });
-    
+
     editor.on("blur", () => {
         store_in_storage(encode_script());
     });
 
     outputContainer = document.getElementById("outputContainer");
-
-    try_load_script();
 
     document.onkeyup = function(e)
     {
@@ -35,7 +37,104 @@ function setup()
 
     Chart.defaults.global.defaultFontFamily = "'Ubuntu', sans-serif";
     Chart.defaults.global.defaultFontSize = 16;
+
+    try_load_script();
 }
+
+function try_load_script()
+{
+    var params = new URLSearchParams(document.location.search);
+    var compressed = params.get("script");
+    var url = params.get("url");
+
+    if(compressed != null)
+    {
+        editor.doc.setValue(decode_script(compressed));
+    }
+    else if(url != null)
+    {
+        load_file(url);
+    }
+    else
+    {
+        var stored = load_from_storage();
+        if(stored != null)
+        {
+            editor.doc.setValue(decode_script(stored));
+        }
+    }
+}
+
+function decode_script(script)
+{
+    var decompressed = LZString.decompressFromEncodedURIComponent(script);
+    if(decompressed == null)
+        decompressed = "-- error while decoding URL";
+
+    return decompressed;
+}
+
+function encode_script()
+{
+    var script = editor.doc.getValue();
+    var compressed = LZString.compressToEncodedURIComponent(script);
+    return compressed;
+}
+
+const storageKey = "lastScript";
+
+function store_in_storage(data)
+{
+    var storage = window.localStorage;
+    if(storage != null)
+    {
+        storage.setItem(storageKey, data);
+    }
+}
+
+function load_from_storage()
+{
+    var storage = window.localStorage;
+    if(storage != null)
+    {
+        return storage.getItem(storageKey);
+    }
+}
+
+function load_file(url)
+{
+    if(url == null || url == "")
+        return;
+
+    var xhttp = new XMLHttpRequest();
+    xhttp.onload = function() {
+        editor.doc.setValue(xhttp.responseText);
+    };
+    xhttp.onerror = function() {
+        editor.doc.setValue("-- error occured while loading " + url);
+    }
+    xhttp.open("GET", url, true);
+    xhttp.send();
+}
+
+function share()
+{
+    var compressed = encode_script();
+    var url = window.location.origin + window.location.pathname + "?script=" + compressed;
+
+    var text = document.createElement('textarea');
+    text.value = url;
+    document.body.appendChild(text);
+    text.select();
+    document.execCommand('copy');
+    document.body.removeChild(text);
+
+    alert("URL copied to clipboard:\n" + url);
+}
+
+/////////////////////
+// Lua integration //
+/////////////////////
 
 function clear_output()
 {
@@ -117,81 +216,9 @@ function run()
     report(L, status);
 }
 
-function try_load_script()
-{
-    var params = new URLSearchParams(document.location.search);
-    var compressed = params.get("script");
-    var url = params.get("url");
-
-    if(compressed != null)
-    {
-        editor.doc.setValue(decode_script(compressed));
-    }
-    else if(url != null)
-    {
-        load_file(url);
-    }
-    else
-    {
-        var stored = load_from_storage();
-        if(stored != null)
-        {
-            editor.doc.setValue(decode_script(stored));
-        }
-    }
-}
-
-function decode_script(script)
-{
-    var decompressed = LZString.decompressFromEncodedURIComponent(script);
-    if(decompressed == null)
-        decompressed = "-- error while decoding URL";
-
-    return decompressed;
-}
-
-function encode_script()
-{
-    var script = editor.doc.getValue();
-    var compressed = LZString.compressToEncodedURIComponent(script);
-    return compressed;
-}
-
-const storageKey = "lastScript";
-
-function store_in_storage(data)
-{
-    var storage = window.localStorage;
-    if(storage != null)
-    {
-        storage.setItem(storageKey, data);
-    }
-}
-
-function load_from_storage()
-{
-    var storage = window.localStorage;
-    if(storage != null)
-    {
-        return storage.getItem(storageKey);
-    }
-}
-
-function load_file(url)
-{
-    if(url == null || url == "")
-        return;
-
-    var xhttp = new XMLHttpRequest();
-    xhttp.onload = function() {
-        editor.doc.setValue(xhttp.responseText);
-    };
-    xhttp.onerror = function() {
-        editor.doc.setValue("-- error occured while loading " + url);
-    }
-    xhttp.open("GET", url, true);
-    xhttp.send();
-}
+//////////////////////////
+// Chart.js integration //
+//////////////////////////
 
 function to_js_array(luatable, size)
 {

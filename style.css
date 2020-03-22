@@ -75,6 +75,11 @@ a:hover
     text-align: right;
 }
 
+#buttons > button
+{
+    height: 1.6em;
+}
+
 .canvasContainer
 {
     margin: 0px;
