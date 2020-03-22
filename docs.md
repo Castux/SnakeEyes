@@ -1,3 +1,8 @@
+---
+layout: default
+title: SuperDice docs
+---
+
 # SuperDice documentation
 
 SuperDice is a web-based calculator for dice probabilities. You write a small program that describes how to roll the dice, and it computes all the possible outcomes and their probabilities. It can also draw graphs to display the results.

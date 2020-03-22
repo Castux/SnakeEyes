@@ -1,6 +1,5 @@
 ---
 ---
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,11 +14,7 @@
     <script src="script.js"></script>
 </head>
 <body>
-    <div id="header">
-        <img src="logo.svg" alt="SuperDice logo">
-        <a href="{{ site.baseurl }}" id="siteName">SuperDice!</a>
-        <a href="docs.html">Documentation</a>
-    </div>
+    {% include header.html %}
     <div id="main">
         <div id="codeContainer">
             <textarea id="code"></textarea>
