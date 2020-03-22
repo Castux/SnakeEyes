@@ -211,7 +211,7 @@ function run()
         return;
 
     var buffer = fengari.to_luastring(script);
-    var status = lauxlib.luaL_loadbuffer(L, buffer, buffer.length, "SuperDice script")
+    var status = lauxlib.luaL_loadbuffer(L, buffer, buffer.length, "user script")
         || do_call(L, 0, 0);
     report(L, status);
 }

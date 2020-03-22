@@ -1,17 +1,17 @@
 ---
 layout: default
-title: SuperDice docs
+title: docs
 ---
 
-# SuperDice documentation
+# {{ site.title }} documentation
 
-SuperDice is a web-based calculator for dice probabilities. You write a small program that describes how to roll the dice, and it computes all the possible outcomes and their probabilities. It can also draw graphs to display the results.
+{{ site.title }} is a web-based calculator for dice probabilities. You write a small program that describes how to roll the dice, and it computes all the possible outcomes and their probabilities. It can also draw graphs to display the results.
 
-This is a complete reference documentation. To learn how to use SuperDice, you might want to read the tutorials and examples first.
+This is a complete reference documentation. To learn how to use {{ site.title }}, you might want to read the tutorials and examples first.
 
 ## Introduction
 
-Programs in SuperDice are written in the Lua programming language. The tool is actually a full-featured Lua 5.3 interpreter that includes a dice probabilities computation library, graphing tools and convenient shortcuts.
+Programs in {{ site.title }} are written in the Lua programming language. The tool is actually a full-featured Lua 5.3 interpreter that includes a dice probabilities computation library, graphing tools and convenient shortcuts.
 
 You can refer to the [reference manual for Lua 5.3](https://www.lua.org/manual/5.3/) for any questions concerning the language itself.
 
