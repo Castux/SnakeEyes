@@ -132,6 +132,13 @@ function Die:summary()
 	self:compute_stats()
 
 	local lines = {}
+
+	if self.stats.boolean then
+		lines[1] = "    \t    ="
+	else
+		lines[1] = "    \t    =\t   <=\t   >="
+	end
+
 	for i,v in ipairs(self.stats.outcomes) do
 		local line =
 		{
