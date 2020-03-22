@@ -16,10 +16,14 @@ function setup()
         indentWithTabs: true,
         indentUnit: 4
     });
+    
+    editor.on("blur", () => {
+        store_in_storage(encode_script());
+    });
 
     outputContainer = document.getElementById("outputContainer");
 
-    check_url();
+    try_load_script();
 
     document.onkeyup = function(e)
     {
@@ -50,13 +54,6 @@ function write_to_output(s)
 
     var text = document.createTextNode(s);
     outputContainer.lastChild.appendChild(text);
-}
-
-function open_url()
-{
-    var url = prompt("URL of the file to load", "");
-    load_file(url);
-    window.history.pushState(null, "", "?url=" + url);
 }
 
 const report = function(L, status)
@@ -98,7 +95,6 @@ function run()
     clear_output();
 
     var script = editor.doc.getValue();
-    encode_script(script);
 
     const L = lauxlib.luaL_newstate();
     lualib.luaL_openlibs(L);
@@ -119,34 +115,66 @@ function run()
     var status = lauxlib.luaL_loadbuffer(L, buffer, buffer.length, "SuperDice script")
         || do_call(L, 0, 0);
     report(L, status);
-
 }
 
-function check_url()
+function try_load_script()
 {
     var params = new URLSearchParams(document.location.search);
-    var script = params.get("script");
+    var compressed = params.get("script");
     var url = params.get("url");
 
-    if(script != null)
-        read_script(script);
+    if(compressed != null)
+    {
+        editor.doc.setValue(decode_script(compressed));
+    }
     else if(url != null)
+    {
         load_file(url);
+    }
+    else
+    {
+        var stored = load_from_storage();
+        if(stored != null)
+        {
+            editor.doc.setValue(decode_script(stored));
+        }
+    }
 }
 
-function read_script(script)
+function decode_script(script)
 {
     var decompressed = LZString.decompressFromEncodedURIComponent(script);
     if(decompressed == null)
         decompressed = "-- error while decoding URL";
 
-    editor.doc.setValue(decompressed);
+    return decompressed;
 }
 
-function encode_script(s)
+function encode_script()
 {
-    var compressed = LZString.compressToEncodedURIComponent(s);
-    window.history.pushState(null, "", "?script=" + compressed);
+    var script = editor.doc.getValue();
+    var compressed = LZString.compressToEncodedURIComponent(script);
+    return compressed;
+}
+
+const storageKey = "lastScript";
+
+function store_in_storage(data)
+{
+    var storage = window.localStorage;
+    if(storage != null)
+    {
+        storage.setItem(storageKey, data);
+    }
+}
+
+function load_from_storage()
+{
+    var storage = window.localStorage;
+    if(storage != null)
+    {
+        return storage.getItem(storageKey);
+    }
 }
 
 function load_file(url)
