@@ -1,3 +1,17 @@
+--[[
+
+In Tales from the Loop, players roll a number of d6s according to their
+abilities and skills, and if any turns up a 6, the roll is a success.
+
+Players can decide to "push" a roll for a price, which means rerolling
+any die that was not already a 6.
+
+Most challenges require only one success, but occasionally the GM can
+set a difficulty of 2 or even 3 required successes.
+
+--]]
+
+
 print "Single die probabilities"
 
 loop_die = d6:apply(function(x)
@@ -13,28 +27,35 @@ plot_transposed(
 	pushed_die, "Single die pushed"
 )
 
-print "Probability of success with multiple dice"
+-- Compute the combined dice first
 
-numdice = {}
-success = {
-	label = "not pushed",
-	type = "line"
-}
-success_pushed = {
-	label = "pushed",
-	type = "line"
-}
+names = {}
+dice = {}
+pushed_dice = {}
 
 for i = 1,10 do
-	numdice[i] = i .. (i == 1 and " die" or " dice")
-	success[i] = (i * loop_die):any("success")(true)
-	success_pushed[i] = (i * pushed_die):any("success")(true)
+	names[i] = i .. (i == 1 and " die" or " dice")
+	dice[i] = (i * loop_die):count "success"
+	pushed_dice[i]= (i * pushed_die):count "success"
 end
 
-plot_raw(numdice, {success, success_pushed}, false, true)
+print "Probability of success with multiple dice"
+print "(depending on number of successes required)"
 
-_6dice = (6 * loop_die):count("success")
+normal = { label = "normal (1)", type = "line" }
+pushed = { label = "pushed (1)", type = "line" }
+normal2 = { label = "normal (2)", type = "line" }
+pushed2 = { label = "pushed (2)", type = "line" }
+normal3 = { label = "normal (3)", type = "line" }
+pushed3 = { label = "pushed (3)", type = "line" }
 
-print "Example of number of successes (on 6 non-pushed dice)"
-print(_6dice)
-plot(_6dice, "Successes on 6 dice")
+for i = 1,#names do
+	normal[i] = dice[i]:gte(1)(true)
+	pushed[i] = pushed_dice[i]:gte(1)(true)
+	normal2[i] = dice[i]:gte(2)(true)
+	pushed2[i] = pushed_dice[i]:gte(2)(true)
+	normal3[i] = dice[i]:gte(3)(true)
+	pushed3[i] = pushed_dice[i]:gte(3)(true)
+end
+
+plot_raw(names, {normal, pushed, normal2, pushed2, normal3, pushed3}, false, true)
