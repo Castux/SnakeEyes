@@ -1,0 +1,112 @@
+<html>
+<head>
+    <title>SuperDice: documentation</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css?family=Ubuntu|Ubuntu+Mono&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="header">
+        <img src="logo.svg"></img>
+        <a href="/" id="siteName">SuperDice!</a>
+        <a href="docs.html">Documentation</a>
+    </div>
+    <div id="main">
+        <h1 id="superdice-documentation">SuperDice documentation</h1>
+        <p>SuperDice is a web-based calculator for dice probabilities. You write a small program that describes how to roll the dice, and it computes all the possible outcomes and their probabilities. It can also draw graphs to display the results.</p>
+        <p>This is a complete reference documentation. To learn how to use SuperDice, you might want to read the tutorials and examples first.</p>
+        <h2 id="introduction">Introduction</h2>
+        <p>Programs in SuperDice are written in the Lua programming language. The tool is actually a full-featured Lua 5.3 interpreter that includes a dice probabilities computation library, graphing tools and convenient shortcuts.</p>
+        <p>You can refer to the <a href="https://www.lua.org/manual/5.3/">reference manual for Lua 5.3</a> for any questions concerning the language itself.</p>
+        <p>This documentation describes essentially the dice probabilities library and the environment setup for the web tool, which provides a few global functions, and introduces two object classes: <code>Die</code> and <code>DiceCollection</code>.</p>
+        <h2 id="automatic-conversion">Automatic conversion</h2>
+        <p>Throughout the library, wherever a <code>Die</code> object is expected, one can provide a single value instead (number, string or boolean), and it will be converted to a <code>Die</code> object with that single outcome.</p>
+        <p>Similarly, instead of a <code>Die</code>, one can provide a <code>DiceCollection</code>, which will be converted to a single <code>Die</code> via the <code>sum</code> method.</p>
+        <h2 id="global-functions">Global functions</h2>
+        <h3 id="dn">d(n)</h3>
+        <p>Returns a <code>Die</code> object with outcomes 1 to <code>n</code>, all equiprobable.</p>
+        <h3 id="doutcomes-probabilities">d(outcomes [, probabilities])</h3>
+        <p>Returns a <code>Die</code> object with given <code>outcomes</code>, and given relative <code>probabilities</code> (defaults to equiprobable). Outcomes can be numbers, string, booleans or other <code>Die</code> objects. Different types of outcomes cannot be mixed in a single <code>Die</code>.</p>
+        <h3 id="dn-1">dN</h3>
+        <p>All globals <code>d1</code>, <code>d2</code>, <code>d3</code>, etc. (<code>d</code> followed by any number of digits) are pre-defined to the same result as <code>d(N)</code>.</p>
+        <h3 id="abs-acos-...">abs, acos, ...</h3>
+        <p>The entire contents of the Lua <code>math</code> library are in the global environment: <code>abs</code>, <code>acos</code>, <code>asin</code>, <code>atan</code>, <code>ceil</code>, <code>cos</code>, <code>deg</code>, <code>exp</code>, <code>floor</code>, <code>fmod</code>, <code>huge</code>, <code>log</code>, <code>max</code>, <code>maxinteger</code>, <code>min</code>, <code>mininteger</code>, <code>modf</code>, <code>pi</code>, <code>rad</code>, <code>random</code>, <code>randomseed</code>, <code>sin</code>, <code>sqrt</code>, <code>tan</code>, <code>tointeger</code>, <code>type</code>, <code>ult</code></p>
+        <h3 id="write">write</h3>
+        <p>Although the <code>io</code> library is not available, the <code>write</code> function is provided to replace <code>io.write</code>, and works similarly. <code>print</code> works as usual (placing tabs between its arguments).</p>
+        <h3 id="plotdie-label">plot(die [, label])</h3>
+        <p>Plots a single die: probabilities as a bar chart, and for a die with non boolean outcomes, the two cumulative distributions overlaid as lines. The optional <code>label</code> string is used in the plot's legend.</p>
+        <h3 id="plotdie1-label1-die2-label2-...">plot(die1 [, label1], die2 [, label2], ...)</h3>
+        <p>Plots the probabilities for multiple dice in a single plot, as lines. Each die can be followed by an optional string argument that will be used a label in the legend.</p>
+        <h3 id="plot_cdfdie1-label1-die2-label2-...">plot_cdf(die1 [, label1], die2 [, label2], ...)</h3>
+        <p>Similar to <code>plot</code> for multiple dice, but plots the cumulative distributions instead (probabilities of outcomes lower than or equal). Cannot be used with boolean-valued dice.</p>
+        <p>Alternatively, the function can take a single table argument containing the dice and labels.</p>
+        <h3 id="plot_cdf2die1-label1-die2-label2-...">plot_cdf2(die1 [, label1], die2 [, label2], ...)</h3>
+        <p>Similar to <code>plot</code> for multiple dice, but plots the opposite cumulative distributions instead (probabilities of outcomes greater than or equal). Cannot be used with boolean-valued dice.</p>
+        <p>Alternatively, the function can take a single table argument containing the dice and labels.</p>
+        <h3 id="plot_transposeddie1-label1-die2-label2-...">plot_transposed(die1 [, label1], die2 [, label2], ...)</h3>
+        <p>Plots multiple dice so that each die is a column of all its outcomes in a stacked bar chart. This can be useful to visualize and compare dice with a low number of outcomes.</p>
+        <p>Alternatively, the function can take a single table argument containing the dice and labels.</p>
+        <h3 id="plot_rawlabels-datasets-stacked-percentage">plot_raw(labels, datasets, stacked, percentage)</h3>
+        <p>The library exposes the internal plotting function, for maximum flexibility. <code>labels</code> is an array of labels (the X axis) and <code>datasets</code> is an array containing the datasets to plot. Each dataset should be an array of values (same size as <code>labels</code>) and can optionally contain the following fields:</p>
+        <ul>
+        <li><code>label</code>: the name to use for the dataset in the legend</li>
+        <li><code>type</code>: by default the charts are lines, but this can be set to the string <code>&quot;bar&quot;</code> instead</li>
+        </ul>
+        <p>If <code>stacked</code> is true, the graph will be stacked bars and/or lines, and if <code>percentage</code> is true, the Y axis will be displayed as percentages instead of direct values.</p>
+        <h2 id="die-object"><code>Die</code> object</h2>
+        <h3 id="diesummary">Die:summary()</h3>
+        <p>Returns a string that summarizes the die: the sorted list of outcomes with their probabilities, as well as the cumulative distributions (probability to be lower or higher than a given outcome).</p>
+        <p>This is what is also returned when a <code>Die</code> is converted to a string using <code>tostring</code> (and therefore when using <code>print</code> or <code>write</code>).</p>
+        <h3 id="diecompute_stats">Die:compute_stats()</h3>
+        <p>Returns a table with the following fields:</p>
+        <ul>
+        <li><code>boolean</code>: whether the die's outcomes are booleans or not</li>
+        <li><code>outcomes</code>: the sorted list of possible outcomes of this die (note that strings can be compared and sorted lexicographically in Lua)</li>
+        <li><code>probabilities</code>: the probabilities associated with the outcomes, in the same order</li>
+        <li><code>lte</code>: the cumulative distribution, that is, for each outcome, the probability of getting this outcome or a lower one (in the same order as <code>outcomes</code>)</li>
+        <li><code>gte</code>: the other cumulative distribution: for each outcome, the probability of getting this outcome or a higher one (in the same order as <code>outcomes</code>)</li>
+        </ul>
+        <p>Fields <code>lte</code> and <code>gte</code> are omitted for boolean dice, and the <code>outcomes</code> table is not sorted, since booleans cannot be ordered.</p>
+        <h3 id="dieapplyfunc">Die:apply(func)</h3>
+        <p>Returns a new <code>Die</code> by applying the given function to each outcome. See <code>DiceCollection:apply()</code>.</p>
+        <h3 id="section">..</h3>
+        <p>The concatenation operator is overloaded so that <code>a .. b</code> returns a <code>DiceCollection</code> made of dice <code>a</code> and <code>b</code>. If either operand is a number, it is converted to a constant <code>Die</code> first. If either operand is a <code>DiceCollection</code>, it is converted to a <code>Die</code> by computing its sum.</p>
+        <h3 id="section-1">+ - * / // ^ %</h3>
+        <p>The usual arithmetic operators are overloaded for the <code>Die</code> object, and correspond to applying the given operations to the two operands. For instance, <code>a + b</code> is equivalent to <code>(a .. b):apply(function(x,y) return x + y end)</code>.</p>
+        <p>The <code>*</code> operator is an exception: if the left-hand side operand is a number N, the result is instead a <code>DiceCollection</code> containing N repetitions of the right-hand side operand.</p>
+        <p>The <code>-</code> operator also works as the unary operator for negation.</p>
+        <p>Due to limitations in operator overloading in Lua, the comparisons functions are available as methods instead:</p>
+        <ul>
+        <li><code>lt</code> for operator <code>&lt;</code></li>
+        <li><code>lte</code> for operator <code>&lt;=</code></li>
+        <li><code>gt</code> for operator <code>&gt;</code></li>
+        <li><code>gte</code> for operator <code>&gt;=</code></li>
+        <li><code>eq</code> for operator <code>==</code></li>
+        <li><code>neq</code> for operator <code>~=</code></li>
+        </ul>
+        <p>so that for instance <code>a:lt(b)</code> is equivalent to <code>(a .. b):apply(function(x,y) return x &lt; y end)</code>.</p>
+        <h3 id="dieoutcome">Die(outcome)</h3>
+        <p>A <code>Die</code> object can be called like a function to get the probability of the given <code>outcome</code>. This will of course return 0 if the outcome is not possible on this die.</p>
+        <h2 id="dicecollection-object"><code>DiceCollection</code> object</h2>
+        <p><code>DiceCollection</code> objects are created with the <code>..</code> operator for <code>Die</code> and <code>DiceCollection</code> (eg. <code>a .. b .. c</code>), or multiplying a die to the left by a number (<code>4 * d5</code>).</p>
+        <p>The core method for <code>DiceCollection</code> is <code>apply</code>. Every other method is provided as a convenient shortcut for common dice computations.</p>
+        <h3 id="dicecollectionapplyfunc">DiceCollection:apply(func)</h3>
+        <p>This is the main way to transform and combine dice. <code>apply</code> enumerates all possible combinations of outcomes for the dice in the collection, along with the probability of each such combination. It returns a new <code>Die</code> object where outcomes are the results of calling function <code>func</code> on each combination of outcomes.</p>
+        <h3 id="dicecollectionaccumulatefunc">DiceCollection:accumulate(func)</h3>
+        <p>Applies <code>func</code> to the first two dice of the collection, then to the result and to the third die, then to the result of that and to the fourth die, etc.</p>
+        <p>This can be used to compute efficiently some common operations that can be done die by die instead of rolling all the dice first and applying the operation to the result.</p>
+        <p>See for instance <code>sum</code>, which is defined exactly as <code>collection:accumulate(function(x,y) return x + y end)</code>.</p>
+        <h3 id="dicecollectionsum">DiceCollection:sum()</h3>
+        <p>Returns the <code>Die</code> which is the sum of all dice in the collection.</p>
+        <h3 id="dicecollectioncountvalue">DiceCollection:count(value)</h3>
+        <p>Counts occurrences of <code>value</code> in the outcomes of the dice of the collection. Alternatively, <code>value</code> can be a function, in which case <code>count</code> counts the number of outcomes for which that function returns true.</p>
+        <h3 id="dicecollectionanyvalue">DiceCollection:any(value)</h3>
+        <h3 id="dicecollectionallvalue">DiceCollection:all(value)</h3>
+        <h3 id="dicecollectionnonevalue">DiceCollection:none(value)</h3>
+        <p>Returns a boolean die indicating the probability of getting any/all/no outcome equal to <code>value</code>. Similarly, <code>value</code> can be a function, in which case the die describes the probability of any/all/no outcome to return true when passed to that function.</p>
+        <h3 id="dicecollectionhighest">DiceCollection:highest()</h3>
+        <h3 id="dicecollectionlowest">DiceCollection:lowest()</h3>
+        <p>Computes the distributions of the highest/lowest outcomes.</p>
+    </div>
+</body>
+<script>setup();</script>
+</html>

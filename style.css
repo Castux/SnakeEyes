@@ -89,3 +89,8 @@ a:hover
     padding: 1em;
     font-family: 'Ubuntu Mono', monospace;
 }
+
+code
+{
+    font-family: 'Ubuntu Mono', monospace;
+}
