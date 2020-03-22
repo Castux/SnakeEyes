@@ -3,6 +3,7 @@ body
     font-family: 'Ubuntu', sans-serif;
     font-size: 16px;
     margin: 0px;
+    text-align: justify;
 }
 
 #header
@@ -24,19 +25,16 @@ body
     vertical-align: middle;
 }
 
-#siteName
-{
-    font-weight: bold;
-    display: inline-block;
-    vertical-align: middle;
-    margin-left: 20px;
-}
-
 #header > a
 {
     margin: 0 0 0 20px;
     display: inline-block;
     vertical-align: middle;
+}
+
+#siteName
+{
+    font-weight: bold;
 }
 
 a:link, a:visited
