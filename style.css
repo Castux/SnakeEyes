@@ -95,3 +95,15 @@ code
     border-radius: 5px;
     padding: .05em .4em;
 }
+
+h2
+{
+    width: 100%;
+    padding-top: 0.3em;
+    border-top: 1px solid rgba(0,0,0, 0.3);
+}
+
+h1, h2, h3
+{
+    color: rgba(52, 152, 219, 1);
+}
