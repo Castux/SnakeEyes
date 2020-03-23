@@ -111,12 +111,6 @@ code
     padding: .05em .4em;
 }
 
-h2
-{
-    width: 100%;
-    padding-top: 0.3em;
-    border-top: 1px solid rgba(0,0,0, 0.3);
-}
 
 h1, h2, h3
 {
@@ -127,21 +121,33 @@ h1, h2, h3
 h1
 {
     font-size: 1.7em;
+    margin: 0 0 1em 0;
 }
 
 h2
 {
+    margin: 0.85em 0;
+    width: 100%;
+    padding-top: 0.3em;
+    border-top: 1px solid rgba(0,0,0, 0.3);
     font-size: 1.5em;
 }
 
 h3
 {
     font-size: 1.3em;
+    margin: 0;
+}
+
+h3 + h3
+{
+    margin-top: 5px;
 }
 
 p
 {
     text-align: justify;
+    margin: 1em 0;
 }
 
 @media only screen and (max-width: 600px)

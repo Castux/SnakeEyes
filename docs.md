@@ -112,17 +112,17 @@ Returns a new `Die` by applying the given function to each outcome. See `DiceCol
 
 ### ..
 
-The concatenation operator is overloaded so that `a .. b` returns a `DiceCollection` made of dice `a` and `b`. If either operand is a number, it is converted to a constant `Die` first. If either operand is a `DiceCollection`, it is converted to a `Die` by computing its sum.
+The concatenation operator is overloaded so that `a .. b` returns a `DiceCollection` made of dice `a` and `b`.
 
-### + - *  / // ^ %
+### Arithmetic operators
 
-The usual arithmetic operators are overloaded for the `Die` object, and correspond to applying the given operations to the two operands. For instance, `a + b` is equivalent to `(a .. b):apply(function(x,y) return x + y end)`.
+The usual arithmetic operators `+` `-` `*` `/` `//` `^` and `%` are overloaded for the `Die` object, and correspond to applying the given operations to the two operands. For instance, `a + b` is equivalent to `(a .. b):apply(function(x,y) return x + y end)`.
 
 The `*` operator is an exception: if the left-hand side operand is a number N, the result is instead a `DiceCollection` containing N repetitions of the right-hand side operand.
 
 The `-` operator also works as the unary operator for negation.
 
-Due to limitations in operator overloading in Lua, the comparisons functions are available as methods instead:
+Due to limitations in operator overloading in Lua, the comparisons are available as methods instead:
 
 - `lt` for operator `<`
 - `lte` for operator `<=`
