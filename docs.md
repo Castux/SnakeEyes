@@ -23,6 +23,12 @@ Throughout the library, wherever a `Die` object is expected, one can provide a s
 
 Similarly, instead of a `Die`, one can provide a `DiceCollection`, which will be converted to a single `Die` via the `sum` method.
 
+## Nested dice
+
+When creating a die with `d(outcomes)`, outcomes can be themselves `Die` objects. In that case, the nested dice are flattened: it corresponds to the idea of replacing the result with the outcome of another die. For instance, `d{1,2,3,d6}` concisely expresses "roll a d4, and if a 4 comes up, roll a d6 instead".
+
+Similarly, the function passed to `apply` can return `Die` objects instead of single values.
+
 ## Global functions
 
 ### d(n)
