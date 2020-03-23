@@ -56,7 +56,7 @@ a:hover
 {
     height: 30vh;
     border: 1px solid lightgrey;
-    font-family: 'Ubuntu Mono', monospace;
+    font-family: 'Ubuntu Mono', monospace !important;
 }
 
 #outputContainer
