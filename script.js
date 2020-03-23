@@ -18,7 +18,8 @@ function setup()
         lineNumbers: true,
         mode: "lua",
         indentWithTabs: true,
-        indentUnit: 4
+        indentUnit: 4,
+        lineWrapping: true
     });
 
     editor.on("blur", () => {
@@ -34,9 +35,6 @@ function setup()
             run();
         }
     };
-
-    Chart.defaults.global.defaultFontFamily = "'Ubuntu', sans-serif";
-    Chart.defaults.global.defaultFontSize = 16;
 
     try_load_script();
 }
@@ -278,8 +276,18 @@ function plot(labels, datasets, stacked, percentage)
     }, stacked, percentage);
 }
 
+function ticks_callback(value, index, values)
+{
+    return (value * 100).toFixed(2) + "%" ;
+}
+
 function create_chart(data, stacked, percentage)
 {
+    var style = getComputedStyle(document.querySelector("body"));
+
+    Chart.defaults.global.defaultFontFamily = style.fontFamily;
+    Chart.defaults.global.defaultFontSize = parseInt(style.fontSize);
+
     var ctx = document.getElementById('chartCanvas');
     var canvasContainer = document.createElement("div");
     var canvas = document.createElement("canvas");
@@ -290,9 +298,7 @@ function create_chart(data, stacked, percentage)
     canvasContainer.classList.add("canvasContainer");
 
     var ticks = {
-        callback: function(value, index, values) {
-            return (value * 100).toFixed(2) + "%" ;
-        },
+        callback: ticks_callback,
         beginAtZero: true
     };
 

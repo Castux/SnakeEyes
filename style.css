@@ -1,11 +1,10 @@
-@import url('https://fonts.googleapis.com/css?family=Ubuntu|Ubuntu+Mono&display=swap&subset=latin-ext');
+@import url('https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700|Ubuntu:400,700&display=swap&subset=latin-ext');
 
 body
 {
     font-family: 'Ubuntu', sans-serif;
     font-size: 16px;
     margin: 0px;
-    text-align: justify;
 }
 
 #header
@@ -16,7 +15,8 @@ body
     width: 100%;
 
     color: white;
-    font-size: 20px;
+    font-size: 1.5em;
+    text-align: left;
 }
 
 #header > img
@@ -29,14 +29,9 @@ body
 
 #header > a
 {
-    margin: 0 0 0 20px;
+    margin: 0 0 0 0.8em;
     display: inline-block;
     vertical-align: middle;
-}
-
-#siteName
-{
-    font-weight: bold;
 }
 
 a:link, a:visited
@@ -113,4 +108,49 @@ h2
 h1, h2, h3
 {
     color: rgba(52, 152, 219, 1);
+    font-weight: bold;
+}
+
+h1
+{
+    font-size: 1.7em;
+}
+
+h2
+{
+    font-size: 1.5em;
+}
+
+h3
+{
+    font-size: 1.3em;
+}
+
+p
+{
+    text-align: justify;
+}
+
+@media only screen and (max-width: 600px)
+{
+    #header
+    {
+        font-size: 1em;
+    }
+
+    #header > img
+    {
+        width: 32px;
+        height: 32px;
+    }
+
+    #header > a
+    {
+        margin: 0 0 0 0.5em;
+    }
+
+    body
+    {
+        font-size: 14px;
+    }
 }

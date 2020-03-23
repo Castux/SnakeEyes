@@ -3,17 +3,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>{{ site.title }}</title>
+    {% include head_common.html %}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.0/codemirror.min.css">
-    <link rel="stylesheet" href="style.css">
     <script src = "fengari-web.js"></script>
     <script src = "lz-string.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.0/codemirror.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.0/mode/lua/lua.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
     <script src="script.js"></script>
-    <meta property="og:title" content="{{ site.title }}" />
-    <meta property="og:image" content="logo.png" />
 </head>
 <body>
     {% include header.html %}
