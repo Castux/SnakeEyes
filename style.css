@@ -11,7 +11,6 @@ body
 {
     background-color: rgba(52, 152, 219, 1);
     margin: 0px;
-    padding: 8px;
     width: 100%;
 
     color: white;
@@ -19,17 +18,18 @@ body
     text-align: left;
 }
 
-#header > img
+#header img
 {
     width: 85px;
     height: 85px;
+    margin: 8px;
     display: inline-block;
     vertical-align: middle;
 }
 
-#header > a
+.menuLink
 {
-    margin: 0 0 0 0.8em;
+    margin: 0 0.8em 0 0;
     display: inline-block;
     vertical-align: middle;
 }
@@ -41,6 +41,11 @@ a:link, a:visited
 }
 
 a:hover
+{
+    text-decoration: underline;
+}
+
+p > a:link
 {
     text-decoration: underline;
 }
@@ -138,15 +143,15 @@ p
         font-size: 1em;
     }
 
-    #header > img
+    #header img
     {
         width: 32px;
         height: 32px;
     }
 
-    #header > a
+    .menuLink
     {
-        margin: 0 0 0 0.5em;
+        margin: 0 0.5em 0 0;
     }
 
     body
