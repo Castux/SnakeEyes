@@ -78,6 +78,14 @@ p > a:link
 #buttons > button
 {
     height: 1.6em;
+    font-family: inherit;
+    font-size: inherit;
+    vertical-align: middle;
+}
+
+#buttons abbr
+{
+    text-decoration: none;
 }
 
 .canvasContainer
