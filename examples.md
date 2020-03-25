@@ -9,6 +9,7 @@ layout: default
 - [Basics]({{ site.baseurl }}?url=examples/tutorial-1.lua)
 - [Creating dice]({{ site.baseurl }}?url=examples/tutorial-2.lua)
 - [Modifying dice]({{ site.baseurl }}?url=examples/tutorial-3.lua)
+- [Combining dice]({{ site.baseurl }}?url=examples/tutorial-4.lua)
 
 # Examples
 
