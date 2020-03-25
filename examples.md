@@ -7,6 +7,8 @@ layout: default
 
 - [Using SuperDice]({{ site.baseurl }}?url=examples/tutorial-0.lua)
 - [Basics]({{ site.baseurl }}?url=examples/tutorial-1.lua)
+- [Creating dice]({{ site.baseurl }}?url=examples/tutorial-2.lua)
+- [Modifying dice]({{ site.baseurl }}?url=examples/tutorial-3.lua)
 
 # Examples
 
