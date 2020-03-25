@@ -2,7 +2,7 @@
 
 plot(d2, "d2", d6, "d6", d23, "d23")
 
--- The function "d" can be used for all the rest. Its first form is to just pass it a number:
+-- The function "d" can be used for all the rest. Its first form is to just pass it a number, in which case it will have face 1 up to that number, all equiprobable. The "dN" version is just a shortcut for d(N). 
 
 plot(d(4), "d4", d(2 * 3), "d6")
 
