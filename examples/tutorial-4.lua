@@ -15,7 +15,7 @@ plot(collection:apply(function(x,y)
     return x + y
 end), "d6 + d10")
 
--- In detail, this is what happens. The program enumerates all the possible outcomes for a d6 and a d10 rolled at the same time, and computes the probability of combination of outcomes. Then, it calls the function, passing it the outcomes (in the same order as the dice were added to the collection), and creates a new die with the results. This is pretty much how all the built-in operations are defined internally: using apply and simple functions on the individual outcomes.
+-- In detail, this is what happens. The program enumerates all the possible outcomes for a d6 and a d10 rolled at the same time, and computes the probability of each combination of outcomes. Then, it calls the function, passing it the outcomes (in the same order as the dice were added to the collection), and creates a new die with the results. This is pretty much how all the built-in operations are defined internally: using apply and simple operations on the individual outcomes.
 
 -- You can put any number of dice in a collection, and the function passed to apply should take as many arguments.
 
@@ -24,7 +24,7 @@ print((d6 .. d3 .. d10):apply(function(x,y,z)
     return x - 2*y >= z
 end))
 
--- Of course, this was a basic example doable with the built-in methods:
+-- Of course, this was doable with the built-in methods:
 
 print ""
 print((d6 - d3 * 2):gte(d10))
