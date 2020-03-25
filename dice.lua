@@ -232,14 +232,16 @@ function DiceCollection.new(dice)
 	for i,v in ipairs(dice) do
 
 		if is_dice_collection(v) then
-			v = v:sum()
+			for _,w in ipairs(v) do
+				table.insert(self, w)
+			end
 		end
 
 		if not is_die(v) then
 			v = Die.new{v}
 		end
 
-		self[i] = v
+		table.insert(self, v)
 	end
 
 	setmetatable(self, DiceCollection)
