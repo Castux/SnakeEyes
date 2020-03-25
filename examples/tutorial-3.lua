@@ -60,3 +60,9 @@ print((d20 + 5):gte(23):apply(function(x)
 end))
 
 -- Indeed, in addition to the basic math operators, dice come with methods for basic comparisons as well: lt (lower than), lte (lower than or equal), gt (greater than), gte (greater than or equal), eq (equal), neq (not equal). For arcane reasons, the normal comparison operators that work on numbers cannot be adapted to dice.
+
+-- As a final note, here is a useful Lua idiom that can shorten things a little bit. "a and b or c" will evaluate to b if a is true, and c otherwise. So we could have written even more concisely:
+
+print((d20 + 5):gte(23):apply(function(x)
+    return x and "hit" or "miss"
+end))
