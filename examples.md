@@ -5,7 +5,8 @@ layout: default
 
 # Tutorials
 
-- [Basics of the calculator]({{ site.baseurl }}?url=examples/tutorial-1.lua)
+- [Using SuperDice]({{ site.baseurl }}?url=examples/tutorial-0.lua)
+- [Basics]({{ site.baseurl }}?url=examples/tutorial-1.lua)
 
 # Examples
 
