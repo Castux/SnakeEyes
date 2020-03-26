@@ -83,10 +83,28 @@ local function fmt(x)
 	return string.format("%6.2f%%", x * 100)
 end
 
+local function average(die)
+
+	local sum = 0
+	for outcome,proba in pairs(die.data) do
+		assert(type(proba) == "number", "Cannot compute average of a non numerical die")
+		sum = sum + outcome * proba
+	end
+
+	local ave = sum
+	local sum = 0
+	for outcome,proba in pairs(die.data) do
+		sum = sum + proba * (outcome - ave)^2
+	end
+	local stdev = math.sqrt(sum)
+
+	return ave,stdev
+end
+
 function Die:compute_stats()
 
-	if self.outcomes then
-		return
+	if self.stats then
+		return self.stats
 	end
 
 	local boolean = false
@@ -115,13 +133,20 @@ function Die:compute_stats()
 		end
 	end
 
+	local ave,stdev
+	if type(outcomes[1]) == "number" then
+		ave,stdev = average(self)
+	end
+
 	self.stats =
 	{
 		boolean = boolean,
 		outcomes = outcomes,
 		probabilities = probabilities,
 		lte = not boolean and lte or nil,
-		gte = not boolean and gte or nil
+		gte = not boolean and gte or nil,
+		average = ave,
+		stdev = stdev
 	}
 
 	return self.stats
@@ -149,6 +174,11 @@ function Die:summary()
 		}
 
 		table.insert(lines, table.concat(line, "\t"))
+	end
+
+	if self.stats.average then
+		table.insert(lines, string.format("Average: %.2f", self.stats.average))
+		table.insert(lines, string.format("Standard deviation: %.2f", self.stats.stdev))
 	end
 
 	return table.concat(lines, "\n")

@@ -1,4 +1,4 @@
--- In its simplest form, you can use SuperDice as a calculator for usual dice expressions. "print" will print out basic information about the dice: probability of each outcome, and the "cumulative distributions" (probability of getting results lower or higher than the given one).
+-- In its simplest form, you can use SuperDice as a calculator for usual dice expressions. "print" will print out basic information about the dice: probability of each outcome, the "cumulative distributions" (probability of getting results lower or higher than the given one), its average and other statistics.
 
 print "Roll 3 d6's, add them up, and add three to the result"
 print(3 * d6 + 3)

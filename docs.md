@@ -104,6 +104,11 @@ Returns a table with the following fields:
 - `lte`: the cumulative distribution, that is, for each outcome, the probability of getting this outcome or a lower one (in the same order as `outcomes`)
 - `gte`: the other cumulative distribution: for each outcome, the probability of getting this outcome or a higher one (in the same order as `outcomes`)
 
+For dice with numerical outcomes, the table also has these fields:
+
+- `average`: the average or expectation of the die
+- `stdev`: the standard deviation
+
 Fields `lte` and `gte` are omitted for boolean dice, and the `outcomes` table is not sorted, since booleans cannot be ordered.
 
 ### Die:apply(func)
