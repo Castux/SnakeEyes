@@ -108,10 +108,12 @@ For dice with numerical outcomes, the table also has these fields:
 
 - `average`: the average or expectation of the die
 - `stdev`: the standard deviation
-- `median`: the median
-- `madm`: the median absolute deviation from the median
 
 Fields `lte` and `gte` are omitted for boolean dice, and the `outcomes` table is not sorted, since booleans cannot be ordered.
+
+### Die:percentile(n)
+
+Computes the `n`-th percentile (with `n` between 0 and 1).
 
 ### Die:apply(func)
 

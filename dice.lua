@@ -99,12 +99,17 @@ end
 
 local precision = 0.0001
 
-local function median(outcomes, lte, gte)
+function Die:percentile(x)
+
+	assert(x >= 0 and x <= 1, "Percentile argument should be between 0 and 1")
+	local stats = self:compute_stats()
 
 	local candidates = {}
-	for i = 1,#outcomes do
-		if lte[i] >= 0.5 - precision and gte[i] >= 0.5 - precision then
-			table.insert(candidates, outcomes[i])
+	for i = 1,#stats.outcomes do
+		if stats.lte[i] >= x - precision and
+			stats.gte[i] >= (1-x) - precision then
+
+			table.insert(candidates, stats.outcomes[i])
 			if #candidates == 2 then break end
 		end
 	end
@@ -148,16 +153,9 @@ function Die:compute_stats(no_madm)
 		end
 	end
 
-	local ave,stdev,med,madm
+	local ave,stdev
 	if type(outcomes[1]) == "number" then
 		ave,stdev = average(self)
-		med = median(outcomes, lte, gte)
-
-		if not no_madm then
-			madm = self:apply(function(x)
-				return math.abs(x - med)
-			end):compute_stats("no MADM!").median
-		end
 	end
 
 	self.stats =
@@ -168,9 +166,7 @@ function Die:compute_stats(no_madm)
 		lte = not boolean and lte or nil,
 		gte = not boolean and gte or nil,
 		average = ave,
-		stdev = stdev,
-		median = med,
-		madm = madm
+		stdev = stdev
 	}
 
 	return self.stats
@@ -207,8 +203,18 @@ function Die:summary()
 	if self.stats.average then
 		table.insert(lines, string.format("Average: %.2f", self.stats.average))
 		table.insert(lines, string.format("Standard deviation: %.2f", self.stats.stdev))
-		table.insert(lines, string.format("Median: " .. self.stats.median))
-		table.insert(lines, string.format("MADM: " .. self.stats.madm))
+
+		local median = self:percentile(0.5)
+		local madm = self:apply(function(x)
+			return math.abs(x - median)
+		end):percentile(0.5)
+		table.insert(lines, "Median: " .. median)
+		table.insert(lines, "MADM: " .. madm)
+		table.insert(lines, string.format("Quartiles: %f, %f, %f",
+			self:percentile(0.25),
+			median,
+			self:percentile(0.75))
+		)
 	end
 
 	return table.concat(lines, "\n")
