@@ -79,10 +79,6 @@ function Die.new(outcomes, probabilities)
 	return setmetatable({ data = t }, Die)
 end
 
-local function fmt(x)
-	return string.format("%6.2f%%", x * 100)
-end
-
 local function average(die)
 
 	local sum = 0
@@ -101,7 +97,24 @@ local function average(die)
 	return ave,stdev
 end
 
-function Die:compute_stats()
+local function median(outcomes, lte, gte)
+
+	local candidates = {}
+	for i = 1,#outcomes do
+		if lte[i] >= 0.5 and gte[i] >= 0.5 then
+			table.insert(candidates, outcomes[i])
+			if #candidates == 2 then break end
+		end
+	end
+
+	if #candidates == 1 then
+		return candidates[1]
+	else
+		return (candidates[1] + candidates[2]) / 2
+	end
+end
+
+function Die:compute_stats(no_madm)
 
 	if self.stats then
 		return self.stats
@@ -133,9 +146,16 @@ function Die:compute_stats()
 		end
 	end
 
-	local ave,stdev
+	local ave,stdev,med,madm
 	if type(outcomes[1]) == "number" then
 		ave,stdev = average(self)
+		med = median(outcomes, lte, gte)
+
+		if not no_madm then
+			madm = self:apply(function(x)
+				return math.abs(x - med)
+			end):compute_stats("no MADM!").median
+		end
 	end
 
 	self.stats =
@@ -146,10 +166,16 @@ function Die:compute_stats()
 		lte = not boolean and lte or nil,
 		gte = not boolean and gte or nil,
 		average = ave,
-		stdev = stdev
+		stdev = stdev,
+		median = med,
+		madm = madm
 	}
 
 	return self.stats
+end
+
+local function fmt(x)
+	return string.format("%6.2f%%", x * 100)
 end
 
 function Die:summary()
@@ -179,6 +205,8 @@ function Die:summary()
 	if self.stats.average then
 		table.insert(lines, string.format("Average: %.2f", self.stats.average))
 		table.insert(lines, string.format("Standard deviation: %.2f", self.stats.stdev))
+		table.insert(lines, string.format("Median: " .. self.stats.median))
+		table.insert(lines, string.format("MADM: " .. self.stats.madm))
 	end
 
 	return table.concat(lines, "\n")
