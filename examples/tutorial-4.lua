@@ -26,5 +26,16 @@ end))
 
 -- Of course, this was doable with the built-in methods:
 
-print ""
+print()
 print((d6 - d3 * 2):gte(d10))
+
+-- This is getting useful for more complicated operations, especially those for which you need to see all the outcomes to be able to decide the result. For instance, throwing three dice and picking the middle value:
+
+print()
+print "Middle value of d6, d10 and d7"
+
+print((d6 .. d10 .. d7):apply(function(x,y,z)
+    local t = {x,y,z}
+    table.sort(t)
+    return t[2]
+end))

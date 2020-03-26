@@ -16,5 +16,5 @@ plot_cdf2(dice)
 for i = 1,5,2 do
 	print(dice[i+1])
 	print(dice[i])
-	print ""
+	print()
 end

@@ -3,30 +3,30 @@
 print "Roll 3 d6's, add them up, and add three to the result"
 print(3 * d6 + 3)
 
-print ""
+print()
 
 print "Roll a d3, a d10, and multiply the results together"
 print(d3 * d10)
 
 -- Supported operations are + (addition) - (subtraction) * (multiplication) / (division) // (integer division: rounded down), % (mod, also called remainder), ^ (power or exponentiation). Note the difference between division and integer division.
 
-print ""
+print()
 
 print "d6 / 2"
 print(d6 / 2)
 
-print ""
+print()
 
 print "d6 // 2"
 print(d6 // 2)
 
 -- Multiplication follows a special rule to adhere to the usual way of writing dice rolls: if the left side is a number, it means "roll that many dice and add them together" instead.
 
-print ""
+print()
 print "Roll a d6, multiply the result by 2"
 print(d6 * 2)
 
-print ""
+print()
 
 print "Roll two d6's, and add the results"
 print(2 * d6)
