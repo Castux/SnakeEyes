@@ -201,20 +201,17 @@ function Die:summary()
 	end
 
 	if self.stats.average then
-		table.insert(lines, string.format("Average: %.2f", self.stats.average))
-		table.insert(lines, string.format("Standard deviation: %.2f", self.stats.stdev))
+		table.insert(lines, string.format("Average: %.2f, standard deviation: %.2f", self.stats.average, self.stats.stdev))
 
 		local median = self:percentile(0.5)
 		local madm = self:apply(function(x)
 			return math.abs(x - median)
 		end):percentile(0.5)
-		table.insert(lines, "Median: " .. median)
-		table.insert(lines, "MADM: " .. madm)
+		table.insert(lines, string.format("Median: %f, MAMD: %f", median, madm))
 		table.insert(lines, string.format("Quartiles: %f, %f, %f",
 			self:percentile(0.25),
 			median,
-			self:percentile(0.75))
-		)
+			self:percentile(0.75)))
 	end
 
 	return table.concat(lines, "\n")
@@ -301,17 +298,21 @@ function DiceCollection.new(dice)
 			for _,w in ipairs(v) do
 				table.insert(self, w)
 			end
-		end
+		else
+			if not is_die(v) then
+				v = Die.new{v}
+			end
 
-		if not is_die(v) then
-			v = Die.new{v}
+			table.insert(self, v)
 		end
-
-		table.insert(self, v)
 	end
 
 	setmetatable(self, DiceCollection)
 	return self
+end
+
+function DiceCollection:__concat(other)
+	return DiceCollection.new{self, other}
 end
 
 function DiceCollection:apply(func)
