@@ -46,4 +46,6 @@ plot((3 * d6):apply(function(x,y,z)
     return x + y + z - min(x,y,z)
 end), "3d6 keep 2")
 
--- However, whenever using a dice collection where a die is expected, the sum will be taken, which is why common expressions like "3 * d6 + 4" work.
+plot((5 * d4):apply(max), "Highest of 5 d4's")
+
+-- However, whenever using a dice collection where a die is expected, the sum will be taken, which is why common expressions like "3 * d6 + 4" work as well.

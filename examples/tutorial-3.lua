@@ -7,6 +7,11 @@ print(fudge)
 plot(fudge, "1dF")
 plot(5 * fudge, "5dF")
 
+-- By the way, so far we've read results only as part of the summary given by "print", but to get the probability of a certain outcome as a number, call the die as if it was a function:
+
+proba = (5 * fudge + 4)(3)
+print("The probability of 5dF + 4 to come out a 3 is " .. proba)
+
 -- We've seen that some basic operations are already defined. For anything more complicated, you'll need to modify existing dice. The way to do that is with the "apply" method. You pass it a function, and the result will be a new die, obtained from applying that function to each of its outcomes.
 
 -- As a basic example, let's compute d6 + 3 ourselves:
