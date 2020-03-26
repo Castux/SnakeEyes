@@ -61,6 +61,8 @@ function try_load_script()
             editor.doc.setValue(decode_script(stored));
         }
     }
+
+    window.history.pushState({}, "", window.location.origin);
 }
 
 function decode_script(script)
