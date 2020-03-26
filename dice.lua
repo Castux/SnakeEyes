@@ -97,11 +97,13 @@ local function average(die)
 	return ave,stdev
 end
 
+local precision = 0.0001
+
 local function median(outcomes, lte, gte)
 
 	local candidates = {}
 	for i = 1,#outcomes do
-		if lte[i] >= 0.5 and gte[i] >= 0.5 then
+		if lte[i] >= 0.5 - precision and gte[i] >= 0.5 - precision then
 			table.insert(candidates, outcomes[i])
 			if #candidates == 2 then break end
 		end
