@@ -29,6 +29,13 @@ body
     filter: drop-shadow(2px 2px 4px #00000088);
 }
 
+#header img:hover
+{
+    width: 101px;
+    height: 101px;
+    margin: 0px;
+}
+
 .menuLink
 {
     margin: 0 0.8em 0 0;
