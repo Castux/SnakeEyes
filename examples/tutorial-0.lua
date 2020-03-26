@@ -6,7 +6,7 @@
 
 print "Hello SuperDice!"
 
--- Click the "Run" button to see the results. You can also use the shortcut control-enter.
+-- Click the "Run" button to see the results. You can also use the shortcut control-enter. All the tutorials will be in this format: comments in valid programs. Don't hesitate to modify them to try things out!
 
 -- Finally, note that SuperDice will always save your work in your browser's local storage, so you can safely close the tab and come back later, your last program will still be there!
 
