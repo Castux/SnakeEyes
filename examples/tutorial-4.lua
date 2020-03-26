@@ -39,3 +39,11 @@ print((d6 .. d10 .. d7):apply(function(x,y,z)
     table.sort(t)
     return t[2]
 end))
+
+-- It's a good time to come back to the notation "n * die". Earlier we saw that it was an exception. It does not mean "roll the die and multiply by n", but "roll n time the die". We said that it computed the sum. That's not exactly true. What it does is return a collection made of n time the same die. So this works:
+
+plot((3 * d6):apply(function(x,y,z)
+    return x + y + z - min(x,y,z)
+end), "3d6 keep 2")
+
+-- However, whenever using a dice collection where a die is expected, the sum will be taken, which is why common expressions like "3 * d6 + 4" work.
