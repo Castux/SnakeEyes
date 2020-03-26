@@ -26,6 +26,7 @@ body
     margin: 8px;
     display: inline-block;
     vertical-align: middle;
+    filter: drop-shadow(2px 2px 4px #00000088);
 }
 
 .menuLink
