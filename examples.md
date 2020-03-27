@@ -11,6 +11,7 @@ layout: default
 - [Modifying dice]({{ site.baseurl }}?url=examples/tutorial-3.lua)
 - [Combining dice]({{ site.baseurl }}?url=examples/tutorial-4.lua)
 - [Accumulating operations]({{ site.baseurl }}?url=examples/tutorial-5.lua)
+- [Nested dice]({{ site.baseurl }}?url=examples/tutorial-6.lua)
 
 # Examples
 

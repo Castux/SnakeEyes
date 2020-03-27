@@ -62,7 +62,7 @@ function try_load_script()
         }
     }
 
-    window.history.pushState({}, "", "?");
+    //window.history.pushState({}, "", "?");
 }
 
 function decode_script(script)
