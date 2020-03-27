@@ -11,7 +11,7 @@ layout: default
 
 ## License
 
-{{ site.title }} is free and open source software, released under the [MIT license](license.html). The project is hosted on [Github](https://github.com/Castux/dice). Feel free to fork or submit pull requests!
+{{ site.title }} is free and open source software, released under the [MIT license](license.html). The project is hosted on [Github](https://github.com/Castux/SnakeEyes). Feel free to fork or submit pull requests!
 
 {{ site.title }} includes or uses the following:
 
