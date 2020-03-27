@@ -1,4 +1,4 @@
--- Many rolls in games involve re-rolls, or rolling a certain die depending on the results of another. This can be expressed in SuperDice by nesting dice. When building a die, instead of giving a basic value for an outcome, you can give a whole other die:
+-- Many rolls in games involve re-rolls, or rolling a certain die depending on the results of another. This can be expressed by nesting dice. When building a die, instead of giving a basic value for an outcome, you can give a whole other die:
 
 nested = d{1,2,3,d10}
 
