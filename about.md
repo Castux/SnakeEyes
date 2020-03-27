@@ -22,3 +22,4 @@ It was also a fun little project for me to practice web technologies, and small 
 - [CodeMirror](https://codemirror.net/) code editor, MIT license.
 - [Chart.js](https://www.chartjs.org/) graphing library, MIT license.
 - [Ubuntu](https://design.ubuntu.com/font/) typeface, [Ubuntu font license](https://ubuntu.com/legal/font-licence)
+- [Logo](https://game-icons.net/1x1/delapouite/perspective-dice-six-faces-random.html) by [Delapouite](https://delapouite.com/), under [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/)

@@ -13,8 +13,8 @@
    id="svg13"
    sodipodi:docname="logo-bg.svg"
    inkscape:export-filename="D:\Dev\dice2\logo.png"
-   inkscape:export-xdpi="56.25"
-   inkscape:export-ydpi="56.25"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
    inkscape:version="0.92.2 (5c3e80d, 2017-08-06)">
   <metadata
      id="metadata17">
@@ -42,7 +42,7 @@
      id="namedview15"
      showgrid="false"
      inkscape:zoom="0.4609375"
-     inkscape:cx="256"
+     inkscape:cx="171.38983"
      inkscape:cy="256"
      inkscape:window-x="0"
      inkscape:window-y="0"
@@ -67,12 +67,10 @@
   <rect
      style="opacity:1;fill:#3498db;fill-opacity:1;stroke:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
      id="rect4513"
-     width="785.35596"
-     height="689.89832"
-     x="-78.101692"
-     y="-78.101692"
-     rx="14.8071"
-     ry="14.8071" />
+     width="512"
+     height="512"
+     x="0"
+     y="0" />
   <g
      class=""
      transform="translate(1,11)"
