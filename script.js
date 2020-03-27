@@ -19,7 +19,8 @@ function setup()
         mode: "lua",
         indentWithTabs: true,
         indentUnit: 4,
-        lineWrapping: true
+        lineWrapping: true,
+        inputStyle: "textarea"
     });
 
     editor.on("blur", () => {

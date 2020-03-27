@@ -159,17 +159,18 @@ p
     margin: 1em 0;
 }
 
-@media only screen and (max-width: 600px)
+@media only screen and (max-width: 700px)
 {
     #header
     {
         font-size: 1em;
     }
 
-    #header img
+    #header img, #header img:hover
     {
         width: 32px;
         height: 32px;
+        margin: 8px;
     }
 
     .menuLink
