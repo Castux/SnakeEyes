@@ -20,7 +20,7 @@ plot(nested, "Same thing")
 -- Many cool things can be written that way.
 
 plot(d10:apply(function(x)
-    if x < 8 then
+    if x < 9 then
         return x
     else
         return x + d4
