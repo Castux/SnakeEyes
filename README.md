@@ -2,7 +2,7 @@
 
 SnakeEyes is a web-based calculator for dice probabilities written in Lua, with a web interface in JavaScript and HTML5.
 
-See the [webtool](https://castux.github.io/dice/).
+See the [webtool](https://snake-eyes.io/).
 
 ## License
 
