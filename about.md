@@ -5,9 +5,9 @@ layout: default
 
 # {{ site.title }}
 
-## Why {{ site.title }}?
+## What? Why?
 
-{{ site.title }} is a web-based calculator for dice probabilities. It was inspired by [AnyDice](https://anydice.com/) and [Troll](https://topps.diku.dk/torbenm/troll.msp). I wanted a similar tool, but whose user-facing language would be Lua, as that is most likely my favorite programming language. I wrote the Dice library and used it for myself for a long time before deciding to bring it to an online tool.
+{{ site.title }} is a web-based calculator for dice probabilities. It was inspired by [AnyDice](https://anydice.com/) and [Troll](https://topps.diku.dk/torbenm/troll.msp). Each of these great websites use their own custom language. I wanted a similar tool, but made for a general purpose programming language. I wrote the Dice library in Lua and used it for myself for a long time before deciding to turn it into an online tool.
 
 It was also a fun little project for me to practice web technologies, and small enough to reach a satisfying state of completeness.
 
