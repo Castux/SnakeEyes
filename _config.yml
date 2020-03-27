@@ -1,2 +1,3 @@
-title: SuperDice
+title: SnakeEyes
 baseurl: /dice
+exclude: [README.md]
