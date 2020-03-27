@@ -2,11 +2,11 @@
 
 SuperDice is a web-based calculator for dice probabilities written in Lua, with a web interface in JavaScript and HTML5.
 
-See the [webtool](https://castux.github.io/dice/). 
+See the [webtool](https://castux.github.io/dice/).
 
 ## License
 
-SuperDice is free and open source software, released under the [MIT license](LICENSE.md). Feel free to fork or submit pull requests!
+SuperDice is free and open source software, released under the [MIT license](license.md). Feel free to fork or submit pull requests!
 
 Includes or uses the following:
 
