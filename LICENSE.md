@@ -18,7 +18,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 MIT License
 
-Copyright © 2017 Benoit Giannangeli
+Copyright © 2017 Benoit Giannangeli <br />
 Copyright © 2017-2018 Daurnimator
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
