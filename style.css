@@ -54,7 +54,7 @@ a:hover
     text-decoration: underline;
 }
 
-p > a:link
+p > a:link, li > a:link
 {
     text-decoration: underline;
 }
