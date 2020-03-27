@@ -130,6 +130,7 @@ function share()
     document.body.removeChild(text);
 
     alert("URL copied to clipboard:\n" + url);
+    gtag('event', 'share');
 }
 
 /////////////////////
@@ -191,6 +192,7 @@ const do_call = function(L, narg, nres)
 
 function run()
 {
+    gtag('event', 'run');
     clear_output();
 
     var script = editor.doc.getValue();
