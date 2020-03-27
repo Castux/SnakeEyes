@@ -1,3 +1,4 @@
 title: SnakeEyes
-baseurl: /dice
 exclude: [README.md]
+url: https://castux.github.io
+baseurl: /SnakeEyes
