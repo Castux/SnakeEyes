@@ -61,9 +61,11 @@ function try_load_script()
         {
             editor.doc.setValue(decode_script(stored));
         }
+        else
+        {
+            load_file("examples/placeholder.lua");
+        }
     }
-
-    //window.history.pushState({}, "", "?");
 }
 
 function decode_script(script)
