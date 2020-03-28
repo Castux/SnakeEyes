@@ -59,7 +59,11 @@ function try_load_script()
         var stored = load_from_storage();
         if(stored != null)
         {
-            editor.doc.setValue(decode_script(stored));
+            var script = decode_script(stored);
+            if (script != "")
+                editor.doc.setValue(script);
+            else
+                load_file("examples/placeholder.lua");
         }
         else
         {
