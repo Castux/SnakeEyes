@@ -82,7 +82,7 @@ Alternatively, the function can take a single table argument containing the dice
 The library exposes the internal plotting function, for maximum flexibility. `labels` is an array of labels (the X axis) and `datasets` is an array containing the datasets to plot. Each dataset should be an array of values (same size as `labels`) and can optionally contain the following fields:
 
 - `label`: the name to use for the dataset in the legend
-- `type`: by default the charts are lines, but this can be set to the string `"bar"` instead
+- `type`: by default the charts are bars, but this can be set to the string `"line"` or `"scatter"` instead
 
 If `stacked` is true, the graph will be stacked bars and/or lines, and if `percentage` is true, the Y axis will be displayed as percentages instead of direct values.
 
