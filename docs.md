@@ -86,6 +86,14 @@ The library exposes the internal plotting function, for maximum flexibility. `la
 
 If `stacked` is true, the graph will be stacked bars and/or lines, and if `percentage` is true, the Y axis will be displayed as percentages instead of direct values.
 
+### print_dice(die1 [, label1], die2 [, label2], ...)
+
+A convenience function that will simply print the dice one after the other, preceded with their labels if any.
+
+Alternatively, the function can take a single table argument containing the dice and labels.
+
+In other words, it takes exactly the same arguments as the plot functions, and can be used to easily print out the same data that you plot.
+
 ## `Die` object
 
 ### Die:summary()

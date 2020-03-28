@@ -202,6 +202,17 @@ function plot_transposed(...)
     plot_multi(dice, labels, nil, true)
 end
 
+function print_dice(...)
+    local dice, labels = treat_plot_args(...)
+    for i,die in ipairs(dice) do
+        if(labels[i]) then print(labels[i]) end
+        print(die)
+        if i < #dice then
+            print()
+        end
+    end
+end
+
 --[[ Environment setup ]]
 
 d = Die.new
