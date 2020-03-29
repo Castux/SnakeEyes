@@ -207,7 +207,7 @@ function Die:summary()
 		local madm = self:apply(function(x)
 			return math.abs(x - median)
 		end):percentile(0.5)
-		table.insert(lines, string.format("Median: %f, MAMD: %f", median, madm))
+		table.insert(lines, string.format("Median: %f, MADM: %f", median, madm))
 		table.insert(lines, string.format("Quartiles: %f, %f, %f",
 			self:percentile(0.25),
 			median,
