@@ -1,4 +1,4 @@
--- Welcome to the SnakeEyes dice probability calculator! Try clicking "Run" to see what this example program does. You can learn more by checking out the tutorials on the Examples page.
+-- Welcome to the SnakeEyes dice probability calculator! Try editing this example program and clicking "Run" to see what happens. You can learn more by checking out the tutorials on the Examples page.
 
 print "2d6 + 5"
 print(2 * d6 + 5)

@@ -33,11 +33,12 @@ function setup()
     {
         if (e.ctrlKey && e.which == 13)
         {
-            run();
+            on_run_clicked();
         }
     };
 
     try_load_script();
+    run();
 }
 
 function try_load_script()
@@ -197,9 +198,14 @@ const do_call = function(L, narg, nres)
     return status;
 };
 
-function run()
+function on_run_clicked()
 {
     gtag('event', 'run');
+    run();
+}
+
+function run()
+{
     clear_output();
 
     var script = editor.doc.getValue();
