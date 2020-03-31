@@ -284,6 +284,30 @@ function Die:apply(func)
 	return DiceCollection.apply({self}, func)
 end
 
+function Die:explode(cond, rerolls)
+
+	if rerolls == 0 then
+		return self
+	end
+
+	if type(cond) ~= "function" then
+		local value = cond
+		cond = function(x)
+			return x == value
+		end
+	end
+
+	local next = self:explode(cond, rerolls - 1)
+
+	return self:apply(function(x)
+		if cond(x) then
+			return x + next
+		else
+			return x
+		end
+	end)
+end
+
 --[[ DiceCollection ]]
 
 DiceCollection.__index = DiceCollection

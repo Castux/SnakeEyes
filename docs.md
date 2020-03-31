@@ -154,6 +154,12 @@ so that for instance `a:lt(b)` is equivalent to `(a .. b):apply(function(x,y) re
 
 A `Die` object can be called like a function to get the probability of the given `outcome`. This will of course return 0 if the outcome is not possible on this die.
 
+### Die:explode(condition, rerolls)
+
+The common "explosion" dice mechanic: roll the die, and if the outcome matches the `condition`, reroll and add the result. Keep rerolling as long as the new results match condition, within the limit of `rerolls`.
+
+`condition` can either be a function (returning true for the outcomes that trigger the reroll), or a single value (the only outcome that triggers a reroll).
+
 ## `DiceCollection` object
 
 `DiceCollection` objects are created with the `..` operator for `Die` and `DiceCollection` (eg. `a .. b .. c`), or multiplying a die to the left by a number (`4 * d5`).
