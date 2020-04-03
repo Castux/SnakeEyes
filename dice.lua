@@ -555,4 +555,50 @@ function DiceCollection:sort()
 	end)
 end
 
+function DiceCollection:drop_highest(n)
+	n = n or 1
+
+	return (d{{0}} .. self):accumulate(function(t,v)
+		local sum = table.remove(t)
+		sum = sum + v
+
+		insert_in_sorted_array(t, v)
+		if #t > n then
+			table.remove(t, 1)
+		end
+		table.insert(t, sum)
+		return t
+	end):apply(function(t)
+
+		local sum = table.remove(t)
+		for i,v in ipairs(t) do
+			sum = sum - v
+		end
+		return sum
+	end)
+end
+
+function DiceCollection:drop_lowest(n)
+	n = n or 1
+
+	return (d{{0}} .. self):accumulate(function(t,v)
+		local sum = table.remove(t)
+		sum = sum + v
+
+		insert_in_sorted_array(t, v)
+		if #t > n then
+			table.remove(t)
+		end
+		table.insert(t, sum)
+		return t
+	end):apply(function(t)
+
+		local sum = table.remove(t)
+		for i,v in ipairs(t) do
+			sum = sum - v
+		end
+		return sum
+	end)
+end
+
 return Die
