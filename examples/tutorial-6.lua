@@ -55,3 +55,5 @@ function explode(die, condition, rerolls)
 end
 
 plot(explode(d10, function(x) return x >= 8 end, 5), "d10 explode on 8-10, max 5 rerolls")
+
+-- This is a common enough mechanic that it is built-in as the Die:explode(condition, rerolls) method
