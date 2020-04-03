@@ -25,14 +25,6 @@ local function unpack_array(str)
 	return t
 end
 
-local function array_copy(arr)
-	local copy = {}
-	for i,v in ipairs(arr) do
-		copy[i] = v
-	end
-	return copy
-end
-
 --[[ Die ]]
 
 Die.__index = Die
@@ -290,7 +282,7 @@ local function lift(func)
 			b = Die.new{b}
 		end
 
-		return DiceCollection.new{a,b}:apply(func)
+		return a:combine(b, func)
 	end
 end
 
@@ -332,7 +324,47 @@ function Die:__call(v)
 end
 
 function Die:apply(func)
-	return DiceCollection.apply({self}, func)
+	return self:combine(d(1), func)
+end
+
+local function copy(arr)
+
+	if type(arr) ~= "table" then
+		return arr
+	end
+
+	local copy = {}
+	for i,v in ipairs(arr) do
+		copy[i] = v
+	end
+	return copy
+end
+
+function Die:combine(other, func)
+
+	local outcomes = {}
+	local probabilities = {}
+
+	local d1,d2 = self, other
+
+	for k,v in pairs(d1.data) do
+
+		if d1.type == "table" then
+			k = unpack_array(k)
+		end
+
+		for l,w in pairs(d2.data) do
+
+			if d2.type == "table" then
+				l = unpack_array(l)
+			end
+
+			table.insert(outcomes, func(copy(k), copy(l)))
+			table.insert(probabilities, v * w)
+		end
+	end
+
+	return Die.new(outcomes, probabilities)
 end
 
 function Die:explode(cond, rerolls)
@@ -405,46 +437,6 @@ function DiceCollection:__concat(other)
 	return DiceCollection.new{self, other}
 end
 
-function DiceCollection:apply(func)
-
-	local dice = self
-	local tempk = {}
-	local tempp = 1
-
-	-- Enumerate all combinations of outcomes
-
-	local outcomes = {}
-	local probabilities = {}
-
-	local function rec(level)
-
-		for k,v in pairs(dice[level].data) do
-			tempk[level] = dice[level].type == "table" and unpack_array(k) or k
-			tempp = tempp * v
-
-			if level == #dice then
-				local args = {}
-				for i,v in ipairs(tempk) do
-					args[i] = type(v) == "table" and array_copy(v) or v
-				end
-				local res = func(table.unpack(args))
-
-				table.insert(outcomes, res)
-				table.insert(probabilities, tempp)
-
-			else
-				rec(level + 1)
-			end
-
-			tempp = tempp / v
-		end
-
-	end
-
-	rec(1)
-	return Die.new(outcomes, probabilities)
-end
-
 DiceCollection.__add = Die.__add
 DiceCollection.__sub = Die.__sub
 DiceCollection.__div = Die.__div
@@ -470,7 +462,7 @@ function DiceCollection:accumulate(func)
 	local tmp = self[1]
 
 	for i = 2, #self do
-		tmp = DiceCollection.new{tmp, self[i]}:apply(func)
+		tmp = tmp:combine(self[i], func)
 	end
 
 	return tmp
