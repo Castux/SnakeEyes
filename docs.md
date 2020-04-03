@@ -98,7 +98,7 @@ In other words, it takes exactly the same arguments as the plot functions, and c
 
 ### Die:summary()
 
-Returns a string that summarizes the die: the outcomes with their probabilities, as well as the cumulative distributions and common statistics for numerical dice
+Returns a string that summarizes the die: the outcomes with their probabilities, as well as the cumulative distributions and common statistics for numerical dice.
 
 This is what is also returned when a `Die` is converted to a string using `tostring` (and therefore when using `print` or `write`).
 
@@ -128,7 +128,7 @@ Returns a new `Die` by applying the given function to each outcome.
 
 ### Die:combine(other, func)
 
-Returns a new `Die` by applying the given function to each possible combinations of outcomes of the die and `other`.
+Returns a new `Die` by applying the given function to each possible combinations of outcomes of the die and the `other` die.
 
 ### ..
 
