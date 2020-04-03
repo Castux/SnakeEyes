@@ -19,7 +19,7 @@ This documentation describes essentially the dice probabilities library and the 
 
 ## Automatic conversion
 
-Throughout the library, wherever a `Die` object is expected, one can provide a single value instead (number, string or boolean), and it will be converted to a `Die` object with that single outcome.
+Throughout the library, wherever a `Die` object is expected, one can provide a single value instead (number, string, boolean or array of numbers), and it will be converted to a `Die` object with that single outcome.
 
 Similarly, instead of a `Die`, one can provide a `DiceCollection`, which will be converted to a single `Die` via the `sum` method.
 
@@ -37,7 +37,7 @@ Returns a `Die` object with outcomes 1 to `n`, all equiprobable.
 
 ### d(outcomes [, probabilities])
 
-Returns a `Die` object with given `outcomes`, and given relative `probabilities` (defaults to equiprobable). Outcomes can be numbers, string, booleans or other `Die` objects. Different types of outcomes cannot be mixed in a single `Die`.
+Returns a `Die` object with given `outcomes`, and given relative `probabilities` (defaults to equiprobable). Outcomes can be numbers, string, booleans, arrays of numbers, or other `Die` objects. Different types of outcomes cannot be mixed in a single `Die`.
 
 ### dN
 
@@ -53,7 +53,7 @@ Although the `io` library is not available, the `write` function is provided to 
 
 ### plot(die [, label])
 
-Plots a single die: probabilities as a bar chart, and for a die with non boolean outcomes, the two cumulative distributions overlaid as lines. The optional `label` string is used in the plot's legend.
+Plots a single die: probabilities as a bar chart, and for a numerical die, the two cumulative distributions overlaid as lines. The optional `label` string is used in the plot's legend.
 
 ### plot(die1 [, label1], die2 [, label2], ...)
 
@@ -61,13 +61,13 @@ Plots the probabilities for multiple dice in a single plot, as lines. Each die c
 
 ### plot_cdf(die1 [, label1], die2 [, label2], ...)
 
-Similar to `plot` for multiple dice, but plots the cumulative distributions instead (probabilities of outcomes lower than or equal). Cannot be used with boolean-valued dice.
+Similar to `plot` for multiple dice, but plots the cumulative distributions instead (probabilities of outcomes lower than or equal). Cannot be used with non numerical dice.
 
 Alternatively, the function can take a single table argument containing the dice and labels.
 
 ### plot_cdf2(die1 [, label1], die2 [, label2], ...)
 
-Similar to `plot` for multiple dice, but plots the opposite cumulative distributions instead (probabilities of outcomes greater than or equal). Cannot be used with boolean-valued dice.
+Similar to `plot` for multiple dice, but plots the opposite cumulative distributions instead (probabilities of outcomes greater than or equal). Cannot be used with non numerical dice.
 
 Alternatively, the function can take a single table argument containing the dice and labels.
 
@@ -98,7 +98,7 @@ In other words, it takes exactly the same arguments as the plot functions, and c
 
 ### Die:summary()
 
-Returns a string that summarizes the die: the sorted list of outcomes with their probabilities, as well as the cumulative distributions (probability to be lower or higher than a given outcome).
+Returns a string that summarizes the die: the outcomes with their probabilities, as well as the cumulative distributions and common statistics for numerical dice
 
 This is what is also returned when a `Die` is converted to a string using `tostring` (and therefore when using `print` or `write`).
 
@@ -106,7 +106,6 @@ This is what is also returned when a `Die` is converted to a string using `tostr
 
 Returns a table with the following fields:
 
-- `boolean`: whether the die's outcomes are booleans or not
 - `outcomes`: the sorted list of possible outcomes of this die (note that strings can be compared and sorted lexicographically in Lua)
 - `probabilities`: the probabilities associated with the outcomes, in the same order
 - `lte`: the cumulative distribution, that is, for each outcome, the probability of getting this outcome or a lower one (in the same order as `outcomes`)
@@ -125,7 +124,11 @@ Computes the `n`-th percentile (with `n` between 0 and 1).
 
 ### Die:apply(func)
 
-Returns a new `Die` by applying the given function to each outcome. See `DiceCollection:apply()`.
+Returns a new `Die` by applying the given function to each outcome.
+
+### Die:combine(other, func)
+
+Returns a new `Die` by applying the given function to each possible combinations of outcomes of the die and `other`.
 
 ### ..
 
@@ -133,7 +136,7 @@ The concatenation operator is overloaded so that `a .. b` returns a `DiceCollect
 
 ### Arithmetic operators
 
-The usual arithmetic operators `+` `-` `*` `/` `//` `^` and `%` are overloaded for the `Die` object, and correspond to applying the given operations to the two operands. For instance, `a + b` is equivalent to `(a .. b):apply(function(x,y) return x + y end)`.
+The usual arithmetic operators `+` `-` `*` `/` `//` `^` and `%` are overloaded for the `Die` object, and correspond to applying the given operations to the two operands.
 
 The `*` operator is an exception: if the left-hand side operand is a number N, the result is instead a `DiceCollection` containing N repetitions of the right-hand side operand.
 
@@ -160,11 +163,17 @@ The common "explosion" dice mechanic: roll the die, and if the outcome matches t
 
 `condition` can either be a function (returning true for the outcomes that trigger the reroll), or a single value (the only outcome that triggers a reroll).
 
+### Die:sum()
+
+For a die with arrays of numbers as outcomes, return a new die whose outcomes are the sums of these arrays.
+
 ## `DiceCollection` object
 
 `DiceCollection` objects are created with the `..` operator for `Die` and `DiceCollection` (eg. `a .. b .. c`), or multiplying a die to the left by a number (`4 * d5`).
 
-The core method for `DiceCollection` is `apply`. Every other method is provided as a convenient shortcut for common dice computations.
+The core methods for `DiceCollection` are `apply` and `accumulate`. Every other method is provided as a convenient shortcut for common dice computations. Note that `apply` goes through every possible combination of outcomes of the entire collection, which is much less efficient than `accumulate`, which combines the dice one by one.
+
+Whenever possible, it is recommended to avoid `apply` and use either `accumulate`, or any of the other built-in methods which are based on it.
 
 ### DiceCollection:apply(func)
 
@@ -172,7 +181,7 @@ This is the main way to transform and combine dice. `apply` enumerates all possi
 
 ### DiceCollection:accumulate(func)
 
-Applies `func` to the first two dice of the collection, then to the result and to the third die, then to the result of that and to the fourth die, etc.
+Combines the first two dice of the collection using `func`, then the result and the third die, then the result of that and the fourth die, etc.
 
 This can be used to compute efficiently some common operations that can be done die by die instead of rolling all the dice first and applying the operation to the result.
 
@@ -182,17 +191,30 @@ See for instance `sum`, which is defined exactly as `collection:accumulate(funct
 
 Returns the `Die` which is the sum of all dice in the collection.
 
-### DiceCollection:count(value)
+### DiceCollection:count(value, [value2, [value3, ...]])
 
 Counts occurrences of `value` in the outcomes of the dice of the collection. Alternatively, `value` can be a function, in which case `count` counts the number of outcomes for which that function returns true.
+
+If more than one value or function are provided, `count` returns an array-valued die, where the outcomes are all the combinations of counts, in the same order.
 
 ### DiceCollection:any(value)
 ### DiceCollection:all(value)
 ### DiceCollection:none(value)
 
-Returns a boolean die indicating the probability of getting any/all/no outcome equal to `value`. Similarly, `value` can be a function, in which case the die describes the probability of any/all/no outcome to return true when passed to that function.
+Returns a boolean die indicating the probability of getting any/all/no outcome equal to `value`. Similarly to `count`, `value` can be a function, in which case the die describes the probability of any/all/no outcome to return true when passed to that function.
 
-### DiceCollection:highest()
-### DiceCollection:lowest()
+### DiceCollection:highest([n])
+### DiceCollection:lowest([n])
 
 Computes the distributions of the highest/lowest outcomes.
+
+If `n` is provided, these return array-valued dice of the distributions of the `n` highest/lowest outcomes.
+
+### DiceCollection:sort()
+
+The distribution of the sorted the outcomes of the dice.
+
+### DiceCollection:drop_highest([n])
+### DiceCollection:drop_lowest([n])
+
+The common operation of rolling the dice, removing the `n` highest/lowest results, and adding the rest. `n` defaults to 1.
