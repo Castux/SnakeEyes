@@ -9,15 +9,28 @@ local function is_dice_collection(dc)
 	return getmetatable(dc) == DiceCollection
 end
 
+local function pack_array(arr)
+	return string.pack(string.rep("n",#arr), table.unpack(arr))
+end
+
+local function unpack_array(str)
+
+	local t = {}
+	local i = 1
+	while i <= #str do
+		local v,nexti = string.unpack("n", str, i)
+		t[#t + 1] = math.tointeger(v) or v
+		i = nexti
+	end
+	return t
+end
+
 --[[ Die ]]
 
 Die.__index = Die
 Die.is_die = is_die
 Die.is_dice_collection = is_dice_collection
-
-local function hash_array(arr)
-	return string.pack(string.rep("n",#arr), table.unpack(arr))
-end
+Die.unpack_array = unpack_array
 
 local function check_type(o)
 	local t = type(o)
@@ -64,7 +77,6 @@ function Die.new(outcomes, probabilities)
 	end
 
 	local type_found
-	local hashes = {}
 
 	local function add_outcome(o,p)
 
@@ -77,12 +89,7 @@ function Die.new(outcomes, probabilities)
 		end
 
 		if type(o) == "table" then
-			local hash = hash_array(o)
-			if hashes[hash] then
-				o = hashes[hash]
-			else
-				hashes[hash] = o
-			end
+			o = pack_array(o)
 		end
 
 		t[o] = (t[o] or 0) + p
@@ -107,14 +114,15 @@ function Die.new(outcomes, probabilities)
 		t[k] = v / sum
 	end
 
-	return setmetatable({ data = t }, Die)
+	return setmetatable({ data = t, type = type_found }, Die)
 end
 
 local function average(die)
 
+	assert(die.type == "number", "Cannot compute average of a non numerical die")
+
 	local sum = 0
 	for outcome,proba in pairs(die.data) do
-		assert(type(proba) == "number", "Cannot compute average of a non numerical die")
 		sum = sum + outcome * proba
 	end
 
@@ -158,17 +166,13 @@ function Die:compute_stats(no_madm)
 		return self.stats
 	end
 
-	local numerical = true
 	local outcomes = {}
 	for k,_ in pairs(self.data) do
 		table.insert(outcomes, k)
-		if type(k) ~= "number" then
-			numerical = false
-		end
 	end
 
 	local probabilities, lte, gte = {},{},{}
-	if numerical then
+	if self.type == "number" then
 		table.sort(outcomes)
 	end
 
@@ -185,17 +189,22 @@ function Die:compute_stats(no_madm)
 	end
 
 	local ave,stdev
-	if numerical then
+	if self.type == "number" then
 		ave,stdev = average(self)
+	end
+
+	if self.type == "table" then
+		for i,v in ipairs(outcomes) do
+			outcomes[i] = unpack_array(v)
+		end
 	end
 
 	self.stats =
 	{
-		numerical = numerical,
 		outcomes = outcomes,
 		probabilities = probabilities,
-		lte = numerical and lte or nil,
-		gte = numerical and gte or nil,
+		lte = self.type == "number" and lte or nil,
+		gte = self.type == "number" and gte or nil,
 		average = ave,
 		stdev = stdev
 	}
@@ -213,7 +222,7 @@ function Die:summary()
 
 	local lines = {}
 
-	if self.stats.numerical then
+	if self.type == "number" then
 		lines[1] = "    \t    =\t   <=\t   >="
 	else
 		lines[1] = "    \t    ="
@@ -222,8 +231,8 @@ function Die:summary()
 	for i,v in ipairs(self.stats.outcomes) do
 		local line =
 		{
-			type(v) == "table" and table.concat(v, ",") or tostring(v),
-			fmt(self.data[v]),
+			(type(v) == "table") and table.concat(v, ",") or tostring(v),
+			fmt(self.stats.probabilities[i]),
 			self.stats.lte and fmt(self.stats.lte[i]) or nil,
 			self.stats.gte and fmt(self.stats.gte[i]) or nil,
 		}
@@ -308,6 +317,9 @@ function Die.__mul(a,b)
 end
 
 function Die:__call(v)
+	if type(v) == "table" then
+		v = pack_array(v)
+	end
 	return self.data[v] or 0
 end
 

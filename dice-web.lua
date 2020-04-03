@@ -35,17 +35,12 @@ local function plot_single(die, name)
     local stats = die:compute_stats()
     name = name or ""
 
-    local probas = {}
-    for i,v in ipairs(stats.outcomes) do
-        probas[i] = die(v)
-    end
+    local datasets = { stats.probabilities }
 
-    local datasets = { probas }
+    stats.probabilities.label = name .. " (=)"
+    stats.probabilities.type = "bar"
 
-    probas.label = name .. " (=)"
-    probas.type = "bar"
-
-    if not stats.boolean then
+    if die.type == "number" then
         stats.lte.label = name .. " (<=)"
         stats.lte.type = "line"
         stats.gte.label = name .. " (>=)"
@@ -55,7 +50,15 @@ local function plot_single(die, name)
         table.insert(datasets, stats.gte)
     end
 
-    plot_raw(stats.outcomes, datasets, false, true)
+    local labels = stats.outcomes
+    if die.type == "table" then
+        labels = {}
+        for i,v in ipairs(stats.outcomes) do
+            labels[i] = table.concat(v, ",")
+        end
+    end
+
+    plot_raw(labels, datasets, false, true)
 end
 
 local function transpose_datasets(labels, outcomes, datasets)
@@ -80,6 +83,7 @@ local function plot_multi(dice, labels, cdf, transpose)
 
     local outcomes = {}
     local datasets = {}
+    local is_packed = {}
 
     for i,die in ipairs(dice) do
 
@@ -88,9 +92,11 @@ local function plot_multi(dice, labels, cdf, transpose)
             dice[i] = die
         end
 
-        local stats = die:compute_stats()
-        for _,v in ipairs(stats.outcomes) do
-            outcomes[v] = true
+        for k,v in pairs(die.data) do
+            outcomes[k] = true
+            if die.type == "table" then
+                is_packed[k] = true
+            end
         end
 
         datasets[i] =
@@ -101,21 +107,19 @@ local function plot_multi(dice, labels, cdf, transpose)
     end
 
     do
-        local type_found
+        local numerical = true
         local tmp = {}
         for k,_ in pairs(outcomes) do
-            if not type_found then
-                type_found = type(k)
+            if type(k) ~= "number" then
+                numerical = false
             end
-            assert(type_found == type(k), "cannot plot dice of different types")
-
-            table.insert(tmp, k)
+            table.insert(tmp, is_packed[k] and Die.unpack_array(k) or k)
         end
 
-        if type_found ~= "boolean" then
+        if numerical then
             table.sort(tmp)
         elseif cdf then
-            error("cannot plot CDF for boolean dice")
+            error("cannot plot CDF for non numerical dice")
         end
 
 		outcomes = tmp
@@ -128,6 +132,10 @@ local function plot_multi(dice, labels, cdf, transpose)
                 cdf == "cdf2" and die:gte(outcome)(true) or
                 die(outcome)
             datasets[j][i] = proba ~= 0 and proba or nil
+        end
+
+        if type(outcome) == "table" then
+            outcomes[i] = table.concat(outcome, ",")
         end
     end
 
