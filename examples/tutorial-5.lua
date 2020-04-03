@@ -9,9 +9,9 @@
 print "highest of 10d10"
 print((10 * d10):highest())
 
--- Enters the power of the "accumulate" method! Let's get back to the basic sum example. Computing the sum of 10d10 is not an unreasonable question, but we clearly can't enumerate 10 billions combinations. The key here is that addition can be done *die by die*. Instead of rolling the ten dice, and then adding all the outcomes together, we can very well roll the first die, then the second, then add. Next, we roll the third die and add it to the previous result. Then, we roll the fourth die, add it to the result, and so on.
+-- Enters the power of the "accumulate" method! Let's get back to the basic sum example. Computing the sum of 10d10 is not an unreasonable question, but we really shouldn't enumerate 10 billions combinations. The key here is that addition can be done *die by die*. Instead of rolling the ten dice, and then adding all the outcomes together, we can very well roll the first die, then the second, then add. Next, we roll the third die and add it to the previous result. Then, we roll the fourth die, add it to the result, and so on.
 
--- This is exactly what "accumulate" does. You pass it a function that takes only two arguments, and it will apply it to the first two dice, then to the result and the third die, then to *that* result and the fourth die, and so on until the end.
+-- This is exactly what "accumulate" does. You pass it a function that takes only two arguments, and it will combine the first two dice with it, then the result with the third die, then *that* result with the fourth die, and so on until the end.
 
 sum_10d10 = (10 * d10):accumulate(function(x,y)
     return x + y
@@ -19,7 +19,7 @@ end)
 
 plot(sum_10d10, "10d10 with accumulate", 10 * d10, "built-in sum")
 
--- It works! In fact, the built-in sum is defined exactly like this. Even though sum'ing collections is automatic in most places, the explicit "sum" method exists
+-- It works! In fact, the built-in sum method is defined exactly like this. Even though sum'ing collections is automatic in most places, the explicit "sum" method exists
 
 plot((2 * d6 .. d4):sum(), "2d6 + d4")
 
@@ -49,3 +49,5 @@ print "Yahtzee!"
 print(d6:apply(function(x)
     return (4*d6):all(x)
 end))
+
+-- This last example used "nested" dice. See next tutorial for details!
