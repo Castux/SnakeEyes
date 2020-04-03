@@ -486,19 +486,32 @@ function DiceCollection:sum()
 	return self:accumulate(function(x,y) return x + y end)
 end
 
-function DiceCollection:count(func)
+function DiceCollection:count(...)
 
-	if type(func) ~= "function" then
-		local value = func
-		func = function(x) return x == value end
+	local funcs = {...}
+	local counts = {}
+
+	for i,func in ipairs(funcs) do
+		if type(func) ~= "function" then
+			funcs[i] = function(x) return x == func end
+		end
+		counts[i] = 0
 	end
 
-	local dice = {}
-	for i,v in ipairs(self) do
-		dice[i] = v:apply(function(x) return func(x) and 1 or 0 end)
+	local counted = (d{counts} .. self):accumulate(function(t,v)
+		for i,func in ipairs(funcs) do
+			if func(v) then
+				t[i] = t[i] + 1
+			end
+		end
+		return t
+	end)
+
+	if #funcs == 1 then
+		counted = counted:apply(function(t) return t[1] end)
 	end
 
-	return DiceCollection.new(dice):sum()
+	return counted
 end
 
 function DiceCollection:any(func)
