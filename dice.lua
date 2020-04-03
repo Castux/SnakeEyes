@@ -25,6 +25,14 @@ local function unpack_array(str)
 	return t
 end
 
+local function array_copy(arr)
+	local copy = {}
+	for i,v in ipairs(arr) do
+		copy[i] = v
+	end
+	return copy
+end
+
 --[[ Die ]]
 
 Die.__index = Die
@@ -400,7 +408,11 @@ function DiceCollection:apply(func)
 			tempp = tempp * v
 
 			if level == #dice then
-				local res = func(table.unpack(tempk))
+				local args = {}
+				for i,v in ipairs(tempk) do
+					args[i] = type(v) == "table" and array_copy(v) or v
+				end
+				local res = func(table.unpack(args))
 
 				table.insert(outcomes, res)
 				table.insert(probabilities, tempp)
