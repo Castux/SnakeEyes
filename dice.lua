@@ -396,7 +396,7 @@ function DiceCollection:apply(func)
 	local function rec(level)
 
 		for k,v in pairs(dice[level].data) do
-			tempk[level] = k
+			tempk[level] = dice[level].type == "table" and unpack_array(k) or k
 			tempp = tempp * v
 
 			if level == #dice then
