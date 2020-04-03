@@ -359,6 +359,21 @@ function Die:explode(cond, rerolls)
 	end)
 end
 
+function Die:sum()
+
+	return self:apply(function(t)
+		if type(t) ~= "table" then
+			return t
+		end
+
+		local sum = 0
+		for i,v in ipairs(t) do
+			sum = sum + v
+		end
+		return sum
+	end)
+end
+
 --[[ DiceCollection ]]
 
 DiceCollection.__index = DiceCollection
@@ -492,12 +507,44 @@ function DiceCollection:none(func)
 	return self:count(func):eq(0)
 end
 
-function DiceCollection:highest()
-	return self:accumulate(math.max)
+local function insert_in_sorted_array(arr, v)
+
+	table.insert(arr, v)
+	local i = #arr
+	while i > 1 and arr[i] < arr[i-1] do
+		arr[i], arr[i-1] = arr[i-1], arr[i]
+		i = i - 1
+	end
 end
 
-function DiceCollection:lowest()
-	return self:accumulate(math.min)
+function DiceCollection:highest(n)
+
+	if not n or n == 1 then
+		return self:accumulate(math.max)
+	end
+
+	return (d{{}} .. self):accumulate(function(t,v)
+		insert_in_sorted_array(t, v)
+		if #t > n then
+			table.remove(t, 1)
+		end
+		return t
+	end)
+end
+
+function DiceCollection:lowest(n)
+
+	if not n or n == 1 then
+		return self:accumulate(math.min)
+	end
+
+	return (d{{}} .. self):accumulate(function(t,v)
+		insert_in_sorted_array(t, v)
+		if #t > n then
+			table.remove(t)
+		end
+		return t
+	end)
 end
 
 return Die
