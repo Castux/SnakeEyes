@@ -547,4 +547,12 @@ function DiceCollection:lowest(n)
 	end)
 end
 
+function DiceCollection:sort()
+
+	return (d{{}} .. self):accumulate(function(t,v)
+		insert_in_sorted_array(t, v)
+		return t
+	end)
+end
+
 return Die
