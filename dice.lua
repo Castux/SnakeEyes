@@ -323,10 +323,6 @@ function Die:__call(v)
 	return self.data[v] or 0
 end
 
-function Die:apply(func)
-	return self:combine(d(1), func)
-end
-
 local function copy(arr)
 
 	if type(arr) ~= "table" then
@@ -338,6 +334,24 @@ local function copy(arr)
 		copy[i] = v
 	end
 	return copy
+end
+
+function Die:apply(func)
+
+	local outcomes = {}
+	local probabilities = {}
+
+	for k,v in pairs(self.data) do
+
+		if self.type == "table" then
+			k = unpack_array(k)
+		end
+
+		table.insert(outcomes, func(copy(k)))
+		table.insert(probabilities, v)
+	end
+
+	return Die.new(outcomes, probabilities)
 end
 
 function Die:combine(other, func)
@@ -590,6 +604,15 @@ function DiceCollection:drop_lowest(n)
 			sum = sum - v
 		end
 		return sum
+	end)
+end
+
+function DiceCollection:apply(func)
+	return (d{{}} .. self):accumulate(function(t,v)
+		table.insert(t,v)
+		return t
+	end):apply(function(t)
+		return func(table.unpack(t))
 	end)
 end
 
