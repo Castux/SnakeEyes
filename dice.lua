@@ -15,6 +15,27 @@ Die.__index = Die
 Die.is_die = is_die
 Die.is_dice_collection = is_dice_collection
 
+local function hash_array(arr)
+	return string.pack(string.rep("n",#arr), table.unpack(arr))
+end
+
+local function check_type(o)
+	local t = type(o)
+	if t == "number" or t == "boolean" or t == "string" then
+		return true
+	end
+
+	if t == "table" then
+		for i,v in ipairs(o) do
+			if type(v) ~= "number" then
+				return false
+			end
+		end
+	end
+
+	return true
+end
+
 function Die.new(outcomes, probabilities)
 
 	if type(outcomes) == "number" then
@@ -43,15 +64,25 @@ function Die.new(outcomes, probabilities)
 	end
 
 	local type_found
+	local hashes = {}
 
 	local function add_outcome(o,p)
-		assert(type(o) == "number" or type(o) == "string" or type(o) == "boolean",
-			"only numbers, strings and booleans can be used as outcomes")
+
+		assert(check_type(o), "outcomes of a die can only be of types: number, boolean, string, or array of numbers")
 
 		if type_found then
 			assert(type(o) == type_found, "all outcomes of a die must be of the same type")
 		else
 			type_found = type(o)
+		end
+
+		if type(o) == "table" then
+			local hash = hash_array(o)
+			if hashes[hash] then
+				o = hashes[hash]
+			else
+				hashes[hash] = o
+			end
 		end
 
 		t[o] = (t[o] or 0) + p
@@ -127,17 +158,17 @@ function Die:compute_stats(no_madm)
 		return self.stats
 	end
 
-	local boolean = false
+	local numerical = true
 	local outcomes = {}
 	for k,_ in pairs(self.data) do
 		table.insert(outcomes, k)
-		if type(k) == "boolean" then
-			boolean = true
+		if type(k) ~= "number" then
+			numerical = false
 		end
 	end
 
 	local probabilities, lte, gte = {},{},{}
-	if not boolean then
+	if numerical then
 		table.sort(outcomes)
 	end
 
@@ -154,17 +185,17 @@ function Die:compute_stats(no_madm)
 	end
 
 	local ave,stdev
-	if type(outcomes[1]) == "number" then
+	if numerical then
 		ave,stdev = average(self)
 	end
 
 	self.stats =
 	{
-		boolean = boolean,
+		numerical = numerical,
 		outcomes = outcomes,
 		probabilities = probabilities,
-		lte = not boolean and lte or nil,
-		gte = not boolean and gte or nil,
+		lte = numerical and lte or nil,
+		gte = numerical and gte or nil,
 		average = ave,
 		stdev = stdev
 	}
@@ -182,19 +213,19 @@ function Die:summary()
 
 	local lines = {}
 
-	if self.stats.boolean then
-		lines[1] = "    \t    ="
-	else
+	if self.stats.numerical then
 		lines[1] = "    \t    =\t   <=\t   >="
+	else
+		lines[1] = "    \t    ="
 	end
 
 	for i,v in ipairs(self.stats.outcomes) do
 		local line =
 		{
-			tostring(v),
+			type(v) == "table" and table.concat(v, ",") or tostring(v),
 			fmt(self.data[v]),
-			(not self.stats.boolean) and fmt(self.stats.lte[i]) or nil,
-			(not self.stats.boolean) and fmt(self.stats.gte[i]) or nil,
+			self.stats.lte and fmt(self.stats.lte[i]) or nil,
+			self.stats.gte and fmt(self.stats.gte[i]) or nil,
 		}
 
 		table.insert(lines, table.concat(line, "\t"))
