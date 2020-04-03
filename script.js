@@ -38,7 +38,6 @@ function setup()
     };
 
     try_load_script();
-    run();
 }
 
 function try_load_script()
@@ -50,10 +49,12 @@ function try_load_script()
     if(compressed != null)
     {
         editor.doc.setValue(decode_script(compressed));
+        run();
     }
     else if(url != null)
     {
         load_file(url);
+        run();
     }
     else
     {
