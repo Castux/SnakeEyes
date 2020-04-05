@@ -4,6 +4,7 @@
 
 var editor;
 var outputContainer;
+var currentWorker;
 
 function setup()
 {
@@ -165,15 +166,30 @@ function on_run_clicked()
     run();
 }
 
+function on_stop_clicked()
+{
+    gtag('event', 'stop');
+    stop_worker();
+    write_to_output("(stopped)");
+}
+
+function stop_worker()
+{
+    if(currentWorker != null)
+    {
+        currentWorker.terminate();
+        currentWorker = undefined;
+    }
+
+    document.getElementById("stopButton").classList.add("hiddenButton");
+    document.getElementById("runButton").classList.remove("hiddenButton");
+}
+
 function run()
 {
-    clear_output();
-
-    var script = editor.doc.getValue();
-
-    var w = new Worker("lua-worker.js");
-
-    w.addEventListener('message', function(e)
+    stop_worker();
+    currentWorker = new Worker("lua-worker.js");
+    currentWorker.addEventListener('message', function(e)
     {
         var msg = e.data;
         switch (msg.cmd)
@@ -184,10 +200,18 @@ function run()
             case 'plot':
                 create_chart(msg.data);
                 break;
+            case 'done':
+                stop_worker();
+                break;
         }
     });
 
-    w.postMessage(script);
+    clear_output();
+    document.getElementById("stopButton").classList.remove("hiddenButton");
+    document.getElementById("runButton").classList.add("hiddenButton");
+
+    var script = editor.doc.getValue();
+    currentWorker.postMessage(script);
 }
 
 //////////////////////////

@@ -76,6 +76,8 @@ function run(script)
     var status = lauxlib.luaL_loadbuffer(L, buffer, buffer.length, "user script")
         || do_call(L, 0, 0);
     report(L, status);
+
+    postMessage({'cmd': 'done'});
 }
 
 //////////////////////////

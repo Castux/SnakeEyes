@@ -90,6 +90,13 @@ p > a:link, li > a:link
     font-family: inherit;
     font-size: inherit;
     vertical-align: middle;
+    background: rgba(52, 152, 219, 1);
+    color: #fff;
+}
+
+.hiddenButton
+{
+    display: none;
 }
 
 #buttons abbr
@@ -182,4 +189,23 @@ p
     {
         font-size: 14px;
     }
+}
+
+/* Loader */
+
+.loader {
+  border: 2px solid #f3f3f3; /* Light grey */
+  border-top: 2px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 0.6em;
+  height: 0.6em;
+/*  animation: spin 2s linear infinite;
+*/
+  display: inline-block;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }

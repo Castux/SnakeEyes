@@ -20,7 +20,8 @@
         </div>
         <div id="buttons">
             <button onclick="share();">Share</button>
-            <button onclick="on_run_clicked();"><abbr title="ctrl-enter">Run</abbr></button>
+            <button id="runButton" onclick="on_run_clicked();"><abbr title="ctrl-enter">Run</abbr></button>
+            <button id="stopButton" onclick="on_stop_clicked();" class="hiddenButton">Stop</button>
         </div>
         <div id="outputContainer"></div>
     </div>
