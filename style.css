@@ -84,17 +84,26 @@ p > a:link, li > a:link
     text-align: right;
 }
 
-#buttons > button
+#buttons > .button
 {
+    display: inline-block;
+    padding: 4px 0.8em;
+    margin-left: 10px;
+
     height: 1.6em;
-    font-family: inherit;
-    font-size: inherit;
-    vertical-align: middle;
+    line-height: 1.6em;
+    border-radius: 4px;
     background: rgba(52, 152, 219, 1);
     color: #fff;
 }
 
-.hiddenButton
+#buttons > .button:hover
+{
+    cursor: pointer;
+    background: rgba(52, 152, 219, 0.8);
+}
+
+#buttons > .hiddenButton
 {
     display: none;
 }
@@ -193,19 +202,21 @@ p
 
 /* Loader */
 
-.loader {
-  border: 2px solid #f3f3f3; /* Light grey */
-  border-top: 2px solid #3498db; /* Blue */
-  border-radius: 50%;
-  width: 0.6em;
-  height: 0.6em;
-/*  animation: spin 2s linear infinite;
-*/
-  display: inline-block;
-  vertical-align: middle;
+.loader
+{
+    margin-left: 0.5em;
+    border: 2px solid #fff;
+    border-top: 2px solid rgba(0,0,0,0);
+    border-radius: 50%;
+
+    height: 0.7em;
+    width: 0.7em;
+    animation: spin 2s linear infinite;
+    display: inline-block;
+    vertical-align: middle;
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
