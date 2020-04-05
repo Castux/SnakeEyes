@@ -85,7 +85,7 @@ p > a:link, li > a:link
 
 #buttons
 {
-    margin: 10px;
+    margin-top: 1em;
     text-align: right;
 }
 
