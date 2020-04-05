@@ -1,5 +1,10 @@
 @import url('https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700|Ubuntu:400,700&display=swap&subset=latin-ext');
 
+html
+{
+    overflow-y: scroll;
+}
+
 body
 {
     font-family: 'Ubuntu', sans-serif;
@@ -89,18 +94,36 @@ p > a:link, li > a:link
     display: inline-block;
     padding: 4px 0.8em;
     margin-left: 10px;
+    min-width: 45px;
 
     height: 1.6em;
     line-height: 1.6em;
     border-radius: 4px;
     background: rgba(52, 152, 219, 1);
     color: #fff;
+
+    text-align: center;
+    text-shadow: 2px 2px 4px #00000088;
 }
 
 #buttons > .button:hover
 {
     cursor: pointer;
     background: rgba(52, 152, 219, 0.8);
+}
+
+#buttons > .stopButton
+{
+    animation-name: glow;
+    animation-duration: 0.75s;
+    animation-direction: alternate;
+    animation-iteration-count: infinite;
+}
+
+@keyframes glow
+{
+    0% { opacity: 50%; }
+    100% { opacity: 100%; }
 }
 
 #buttons > .hiddenButton
@@ -198,25 +221,4 @@ p
     {
         font-size: 14px;
     }
-}
-
-/* Loader */
-
-.loader
-{
-    margin-left: 0.5em;
-    border: 2px solid #fff;
-    border-top: 2px solid rgba(0,0,0,0);
-    border-radius: 50%;
-
-    height: 0.7em;
-    width: 0.7em;
-    animation: spin 2s linear infinite;
-    display: inline-block;
-    vertical-align: middle;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
 }
