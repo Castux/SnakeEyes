@@ -49,7 +49,6 @@ function try_load_script()
     else if(url != null)
     {
         load_file(url);
-        run();
     }
     else
     {
@@ -113,6 +112,7 @@ function load_file(url)
     var xhttp = new XMLHttpRequest();
     xhttp.onload = function() {
         editor.doc.setValue(xhttp.responseText);
+        run();
     };
     xhttp.onerror = function() {
         editor.doc.setValue("-- error occured while loading " + url);
