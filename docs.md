@@ -212,7 +212,7 @@ If `n` is provided, these return array-valued dice of the distributions of the `
 
 ### DiceCollection:sort()
 
-The distribution of the sorted the outcomes of the dice.
+The distribution of the sorted outcomes of the dice.
 
 ### DiceCollection:drop_highest([n])
 ### DiceCollection:drop_lowest([n])
