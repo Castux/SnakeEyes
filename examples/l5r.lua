@@ -7,7 +7,7 @@ l5r = d10:explode(10, 3)
 
 -- The simple way would be to just use the built in "highest" function:
 
---plot((5 * l5r):highest(2):sum(), "5 keep 2")
+plot((5 * l5r):highest(2):sum(), "5 keep 2")
 
 -- Unfortunately, computing "highest" is quite expensive, especially with large dice
 -- (these exploding d10s contains forty values), and large "keep" numbers. This method is
@@ -129,7 +129,5 @@ function computeL5R(numDice, keep)
 	end)
 end
 
-result = computeL5R(10,8)
-
-plot(result)
-print(result)
+plot(computeL5R(5,2), "5 keep 2")
+plot(computeL5R(10, 4), "10 keep 4")
