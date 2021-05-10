@@ -20,3 +20,4 @@ layout: default
 - [Advantage and disadvantage in D&D](/?url=examples/advantage.lua)
 - [Blades in the Dark](/?url=examples/blades.lua)
 - [Dungeon World](/?url=examples/dungeonworld.lua)
+- [Legend of the Five Rings](/?url=examples/l5r.lua)
