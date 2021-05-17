@@ -21,3 +21,4 @@ layout: default
 - [Blades in the Dark](/?url=examples/blades.lua)
 - [Dungeon World](/?url=examples/dungeonworld.lua)
 - [Legend of the Five Rings](/?url=examples/l5r.lua)
+- [Advantage mechanics for d100](/?url=examples/d100-advantage.lua)
