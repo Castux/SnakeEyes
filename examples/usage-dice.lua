@@ -5,21 +5,23 @@
 -- Each resource is tracked by saying it is currently one from a sequence of dice
 -- (for instance d20, d12, d10, d8, d6, d4), the largest meaning there is plenty of it,
 -- and the smallest meaning it's about to run out. After using that resource in game, roll
--- the corresponding die. If it's above a one, no changes. If it's a one, the resource
--- is downgraded to the next smaller die, meaning there is now "less" of it.
+-- the corresponding die. If it's above a certain threshold, no changes. If it's under, the
+-- resource is downgraded to the next smaller die, meaning there is now "less" of it.
 
--- After rolling a 1 on the smallest die, the resource runs out.
+-- After rolling a under the threshold on the smallest die, the resource runs out.
 
--- Since each die dX follows a geometric distribution, it has on average X rolls before
+-- Since each die dX follows a geometric distribution, it has on average X/limit rolls before
 -- coming out a one. This means that the average number of rolls for a certain die is the sum
--- of faces on it and all the smaller ones.
+-- of faces/limit for itself and all the smaller ones.
+
+limit = 2		-- rolling this or under downgrades the die
 
 faces = {4,6,8,10,12,20}
 
 function resource(base)
 	
 	local result = base:apply(function(x)
-		return x > 1 and 1 or 0
+		return x > limit and 1 or 0
 	end)
 	
 	return result:explode(1, 30) + 1
@@ -53,6 +55,6 @@ print "Averages:"
 
 local sum = 0
 for i,v in ipairs(faces) do
-	sum = sum + v
+	sum = sum + v/limit
 	print("d" .. v, sum)
 end
