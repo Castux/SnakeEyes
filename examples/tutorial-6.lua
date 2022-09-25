@@ -15,7 +15,7 @@ nested2 = d4:apply(function(x)
     end
 end)
 
-plot(nested, "Same thing")
+plot(nested2, "Same thing")
 
 -- Many cool things can be written that way.
 
